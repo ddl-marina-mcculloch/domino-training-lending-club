@@ -1,0 +1,144 @@
+==============================================================================
+FILE: genai/policy_docs/debt_to_income_policy.txt
+==============================================================================
+DEBT-TO-INCOME RATIO POLICY (Section 3.2)
+
+The debt-to-income (DTI) ratio is a primary underwriting criterion. It
+measures the applicant's total monthly debt obligations as a percentage
+of gross monthly income.
+
+Thresholds:
+  - DTI <= 20%  : Low risk. Eligible for all loan products.
+  - DTI 20–35%  : Moderate risk. Standard underwriting applies.
+  - DTI 35–43%  : Elevated risk. Senior underwriter review required.
+  - DTI > 43%   : High risk. Application must be declined unless
+                  exceptional compensating factors are documented.
+
+Compensating factors that may offset a high DTI:
+  - Significant liquid assets (>12 months of payments in reserve)
+  - Excellent credit history (no delinquencies in 5 years)
+  - Low loan-to-value ratio on secured loans
+  - Strong income growth trajectory with documentation
+
+==============================================================================
+FILE: genai/policy_docs/interest_rate_policy.txt
+==============================================================================
+INTEREST RATE AND LOAN GRADE POLICY (Section 4.1)
+
+Interest rates are assigned based on the applicant's credit grade (A–G)
+and loan term. Higher rates reflect higher perceived credit risk.
+
+Rate bands by grade:
+  - Grade A : 5.0% – 8.0%
+  - Grade B : 8.0% – 11.0%
+  - Grade C : 11.0% – 14.0%
+  - Grade D : 14.0% – 18.0%
+  - Grade E : 18.0% – 22.0%
+  - Grade F : 22.0% – 26.0%
+  - Grade G : 26.0%+
+
+Applications with interest rates above 20% require enhanced income
+verification. Rates above 25% require documentation of the applicant's
+awareness of total repayment costs.
+
+==============================================================================
+FILE: genai/policy_docs/credit_utilization_policy.txt
+==============================================================================
+CREDIT UTILISATION POLICY (Section 5.3)
+
+Revolving credit utilisation reflects how much of an applicant's
+available credit is currently in use.
+
+Guidelines:
+  - Utilisation <= 30%  : Acceptable. No additional review required.
+  - Utilisation 30–60%  : Moderate concern. Consider alongside DTI.
+  - Utilisation 60–80%  : High concern. Request explanation from applicant.
+  - Utilisation > 80%   : Very high. Strong negative signal. Decline
+                          unless strong compensating factors present.
+
+Note: Sudden increases in utilisation (>20pp in 3 months) may indicate
+financial distress and warrant additional investigation.
+
+==============================================================================
+FILE: genai/policy_docs/loan_to_income_policy.txt
+==============================================================================
+LOAN-TO-INCOME RATIO POLICY (Section 3.4)
+
+The loan-to-income (LTI) ratio measures the requested loan amount
+relative to the applicant's annual gross income.
+
+Thresholds:
+  - LTI <= 0.20 : Low risk. Standard processing.
+  - LTI 0.20–0.35: Moderate. Standard underwriting applies.
+  - LTI 0.35–0.50: Elevated. Verify income documentation.
+  - LTI > 0.50  : High. Senior review required. Decline if DTI also elevated.
+
+==============================================================================
+FILE: genai/policy_docs/derogatory_marks_policy.txt
+==============================================================================
+DEROGATORY MARKS POLICY (Section 6.1)
+
+Derogatory marks include public records (bankruptcies, judgements, liens)
+and recent delinquencies (missed payments within the past 24 months).
+
+Policy:
+  - 0 derogatory marks      : No impact on processing.
+  - 1 derogatory mark       : Document the circumstances. Review required
+                              if mark is within 12 months.
+  - 2+ derogatory marks     : Senior underwriter review required.
+  - Bankruptcy within 2 yrs : Automatic decline.
+  - Bankruptcy 2–7 yrs ago  : Eligible with strong compensating factors
+                              and documented recovery.
+
+==============================================================================
+FILE: genai/policy_docs/income_verification_policy.txt
+==============================================================================
+INCOME VERIFICATION POLICY (Section 2.1)
+
+All loan applications must include income verification at one of three levels:
+  - Not Verified   : Stated income only. Applies to loans < $10,000
+                     with Grade A–B applicants.
+  - Source Verified: Income source confirmed (employer, bank). Required
+                     for loans $10,000–$25,000 or Grade C–D.
+  - Verified       : Full income documentation (tax returns, pay stubs).
+                     Required for loans > $25,000 or Grade E–G.
+
+Applications with income verification below the required level for their
+loan amount and grade must be escalated before proceeding.
+
+==============================================================================
+FILE: genai/policy_docs/credit_grade_policy.txt
+==============================================================================
+CREDIT GRADE POLICY (Section 4.2)
+
+Credit grades (A–G) are assigned based on the applicant's FICO score,
+credit history length, and payment behaviour.
+
+Grade descriptions:
+  - Grade A : Excellent credit. FICO 750+. No delinquencies.
+  - Grade B : Good credit. FICO 700–749. Minor issues acceptable.
+  - Grade C : Fair credit. FICO 650–699. Some delinquencies permitted.
+  - Grade D : Below average. FICO 600–649. Enhanced review required.
+  - Grade E : Poor credit. FICO 550–599. Approval requires strong income.
+  - Grade F : Very poor. FICO 500–549. Decline in most circumstances.
+  - Grade G : Exceptional risk. FICO < 500. Decline.
+
+==============================================================================
+FILE: genai/policy_docs/general_lending_policy.txt
+==============================================================================
+GENERAL LENDING POLICY (Section 1.1)
+
+All lending decisions must be made in accordance with applicable fair
+lending laws, including the Equal Credit Opportunity Act (ECOA) and
+the Fair Housing Act. Decisions must be based solely on creditworthiness
+criteria and not on protected characteristics.
+
+The machine learning model score is one input into the underwriting
+decision. Loan officers retain discretion to:
+  - Approve a borderline application with documented compensating factors
+  - Decline an application that scores as low-risk if fraud is suspected
+  - Escalate any application to a senior underwriter
+
+All overrides must be documented in the loan management system with a
+clear rationale. Systematic overrides in one direction may trigger a
+fair lending review.

@@ -74,7 +74,7 @@ Navigate to **Govern > Tasks** in the left pane. Click **Add Tasks** and create 
 
 Assign yourself as owner on each. Click **Save**.
 
-**You've defined your project tasks!**
+**You've defined your project stages & tasks!**
 
 ---
 

@@ -48,7 +48,6 @@ Navigate to the **Access and Sharing** tab. Set project visibility to **Private*
 
 ## Lab 1.3 — Define Project Stages & Tasks
 
-# create 3 stages 
 ***Documentation: [Add Project Tasks](https://docs.dominodatalab.com/en/latest/user_guide/1f1064/set-project-stages/)***
 
 Navigate to **Settings > Tasks** in the left pane. Keep the task stage **Ideation** since we are in the ideation stage of our project. 

@@ -54,11 +54,12 @@ Navigate to the **Access and Sharing** tab. Set project visibility to **Private*
 
 Navigate to **Settings > Tasks** in the left pane. Keep the task stage **Ideation** since we are in the ideation stage of our project. 
 
-Remove the remaining task stages by clicking the red bin icon.
-Under **Add task stage** and create the following three task stages:
+Remove the remaining task stages by clicking the red bin icon next to each. 
 
-| Task Stage Name | Stage |
-|---|---|
+Under **Add task stage** create the following three task stages:
+
+| Task Stage Name
+|---|
 | Data Acquisition and Exploration |
 | Model Training and Evaluation |
 | Model Deployment |

@@ -50,7 +50,7 @@ Navigate to the **Access and Sharing** tab. Set project visibility to **Private*
 
 ***Documentation: [Add Project Tasks](https://docs.dominodatalab.com/en/latest/user_guide/4e60ef/add-project-tasks/)***
 
-Navigate to **Overview > Tasks** in the left pane. Click **Add Task** and create the following three tasks:
+Navigate to **Govern > Tasks** in the left pane. Click **Add Tasks** and create the following three tasks:
 
 | Task Name | Stage |
 |---|---|

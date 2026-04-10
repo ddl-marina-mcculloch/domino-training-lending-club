@@ -38,7 +38,7 @@ In the top right corner, click the **Fork** icon. Name your project *LendingClub
 
 In your new project, click **Settings** in the bottom left.
 
-Verify the default hardware tier is set to **Small** and the compute environment is set to **LendingClubProject**.
+Verify the default hardware tier is set to **Small** and the compute environment is set to **LendingClubProject-TrainingEnvironment**.
 
 Navigate to the **Access and Sharing** tab. Set project visibility to **Private** and add your instructor or a fellow attendee as a collaborator.
 

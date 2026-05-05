@@ -151,7 +151,7 @@ Click **Stop** to stop the workspace instance.
 
 ## Lab 2.5 — Complete Project Tasks
 
-Navigate to **Code** in your project. Click on `EDA_lending.ipynb` and select **Link to Task**. Choose the *Explore Loan Data* task.
+Navigate to **Artifacts** in your project. Click on `results` folder and select **Link to Task** on the notebook outputs. Choose the *Explore Loan Data* task.
 
 Navigate back to **Tasks**, open *Explore Loan Data*, and mark it as complete.
 

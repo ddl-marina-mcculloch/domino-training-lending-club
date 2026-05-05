@@ -143,7 +143,8 @@ def evaluate(model, X_test, y_test, run_dir):
 
 # ---------------------------------------------------------------------------
 # Save model
-# ---------------------------------------------------------------------------
+# ------------------------------------------------------------python3 -c "import pandas as pd; df=pd.read_csv('/mnt/data/LendingClubProject/lending_clean.csv'); print(df.dtypes[df.dtypes=='object']); print('---'); print(df.select_dtypes('object').head(3))"
+---------------
 def save_model(model, path):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "wb") as f:

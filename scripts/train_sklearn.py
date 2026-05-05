@@ -41,7 +41,7 @@ log = logging.getLogger(__name__)
 # Paths
 # ---------------------------------------------------------------------------
 PROJECT_NAME = os.environ.get("DOMINO_PROJECT_NAME", "LendingClubProject")
-DATA_PATH    = f"/domino/datasets/local/{PROJECT_NAME}/lending_clean.csv"
+DATA_PATH    = f"/mnt/data/{PROJECT_NAME}/lending_clean.csv"
 MODEL_DIR    = os.path.join(os.path.dirname(__file__), "..", "models")
 MODEL_PATH   = os.path.join(MODEL_DIR, "sklearn_rf_model.pkl")
 

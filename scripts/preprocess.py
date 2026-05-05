@@ -37,8 +37,8 @@ log = logging.getLogger(__name__)
 # Paths  (override via CLI args or environment variables)
 # ---------------------------------------------------------------------------
 PROJECT_NAME = os.environ.get("DOMINO_PROJECT_NAME", "LendingClubProject")
-DEFAULT_INPUT = f"/domino/datasets/local/{PROJECT_NAME}/lending_raw.csv"
-DEFAULT_OUTPUT = f"/domino/datasets/local/{PROJECT_NAME}/lending_clean.csv"
+DEFAULT_INPUT = f"/mnt/data/{PROJECT_NAME}/lending_raw.csv"
+DEFAULT_OUTPUT = f"/mnt/data/{PROJECT_NAME}/lending_clean.csv"
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -144,28 +144,6 @@ def clean_term_col(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-
-def clean_emp_length(df: pd.DataFrame) -> pd.DataFrame:
-    """Convert emp_length strings like '3 years', '10+ years', '< 1 year' to integers."""
-    if "emp_length" not in df.columns:
-        return df
-    mapping = {
-        "< 1 year": 0,
-        "1 year":   1,
-        "2 years":  2,
-        "3 years":  3,
-        "4 years":  4,
-        "5 years":  5,
-        "6 years":  6,
-        "7 years":  7,
-        "8 years":  8,
-        "9 years":  9,
-        "10+ years": 10,
-    }
-    df["emp_length"] = df["emp_length"].map(mapping).fillna(0).astype(int)
-    log.info(f"emp_length mapped to int; unique values: {sorted(df['emp_length'].unique())}")
-    return df
-
 def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
     log.info("Engineering new features...")
 
@@ -244,7 +222,6 @@ def run_pipeline(input_path: str, output_path: str) -> pd.DataFrame:
     df = create_target(df)
     df = clean_percent_cols(df)
     df = clean_term_col(df)
-    df = clean_emp_length(df)
     df = engineer_features(df)
     df = encode_categoricals(df)
     df = drop_redundant_cols(df)

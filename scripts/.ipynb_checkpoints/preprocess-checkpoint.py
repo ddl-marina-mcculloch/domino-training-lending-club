@@ -37,8 +37,8 @@ log = logging.getLogger(__name__)
 # Paths  (override via CLI args or environment variables)
 # ---------------------------------------------------------------------------
 PROJECT_NAME = os.environ.get("DOMINO_PROJECT_NAME", "LendingClubProject")
-DEFAULT_INPUT = f"/domino/datasets/local/{PROJECT_NAME}/lending_raw.csv"
-DEFAULT_OUTPUT = f"/domino/datasets/local/{PROJECT_NAME}/lending_clean.csv"
+DEFAULT_INPUT = f"/mnt/data/{PROJECT_NAME}/lending_raw.csv"
+DEFAULT_OUTPUT = f"/mnt/data/{PROJECT_NAME}/lending_clean.csv"
 
 # ---------------------------------------------------------------------------
 # Constants

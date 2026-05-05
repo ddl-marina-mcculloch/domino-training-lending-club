@@ -41,7 +41,7 @@ log = logging.getLogger(__name__)
 # Paths
 # ---------------------------------------------------------------------------
 PROJECT_NAME = os.environ.get("DOMINO_PROJECT_NAME", "LendingClubProject")
-DATA_PATH    = f"/mnt/data/{PROJECT_NAME}/lending_clean.csv"
+DATA_PATH    = f"/domino/datasets/local/{PROJECT_NAME}/lending_clean.csv"
 MODEL_DIR    = os.path.join(os.path.dirname(__file__), "..", "models")
 MODEL_PATH   = os.path.join(MODEL_DIR, "sklearn_rf_model.pkl")
 
@@ -143,8 +143,7 @@ def evaluate(model, X_test, y_test, run_dir):
 
 # ---------------------------------------------------------------------------
 # Save model
-# ------------------------------------------------------------python3 -c "import pandas as pd; df=pd.read_csv('/mnt/data/LendingClubProject/lending_clean.csv'); print(df.dtypes[df.dtypes=='object']); print('---'); print(df.select_dtypes('object').head(3))"
----------------
+# ---------------------------------------------------------------------------
 def save_model(model, path):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "wb") as f:

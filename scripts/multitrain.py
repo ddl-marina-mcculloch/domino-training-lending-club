@@ -34,8 +34,8 @@ log = logging.getLogger(__name__)
 # Paths
 # ---------------------------------------------------------------------------
 PROJECT_NAME  = os.environ.get("DOMINO_PROJECT_NAME", "LendingClubProject")
-RAW_DATA      = f"/domino/datasets/local/{PROJECT_NAME}/lending_raw.csv"
-CLEAN_DATA    = f"/domino/datasets/local/{PROJECT_NAME}/lending_clean.csv"
+RAW_DATA      = f"/mnt/data/{PROJECT_NAME}/lending_raw.csv"
+CLEAN_DATA    = f"/mnt/data/{PROJECT_NAME}/lending_clean.csv"
 SCRIPTS_DIR   = os.path.dirname(os.path.abspath(__file__))
 EXPERIMENT    = "LendingClub-CreditRisk"
 

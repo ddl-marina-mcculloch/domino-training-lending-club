@@ -215,7 +215,7 @@ Link the best-performing run to the *Train Credit Risk Model* task and mark it a
 
 ***Documentation: [Deploy Domino endpoints](https://docs.dominodatalab.com/en/latest/user_guide/8dbc91/deploy-domino-endpoints/)***
 
-Navigate to **Deployments > Endpoints** and click **Create Domino endpoint**.
+Navigate to **Deployments > Endpoints** and click **Create Domino endpoint (ML endpoint)**.
 
 - **Name**: `lending-credit-risk-yourname`
 - **Description**:

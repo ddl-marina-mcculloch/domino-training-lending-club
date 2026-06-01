@@ -1,0 +1,203 @@
+# =============================================================================
+# retraining_flow.yaml
+# Domino Flows — LendingClub Credit Risk Retraining Pipeline
+#
+# DAG:
+#   [Ingest from S3] → [Preprocess] → [Train All Models] → [Evaluate AUC]
+#                                                                 ↓
+#                                                     AUC > 0.80? → [Promote Endpoint]
+#                                                                 ↓
+#                                                     AUC ≤ 0.80? → [Alert & Hold]
+#
+# Reference: https://docs.dominodatalab.com/en/latest/user_guide/flows/
+#
+# Usage:
+#   - Import this file via Domino UI: Flows → New Flow → Import YAML
+#   - Or trigger via Domino API
+# =============================================================================
+
+flow:
+  name: "LendingClub Retraining Pipeline"
+  description: >
+    End-to-end retraining pipeline for the LendingClub credit risk model.
+    Ingests fresh loan data from S3, preprocesses, trains three model
+    frameworks, evaluates performance, and conditionally promotes the
+    best model to the live scoring endpoint.
+  project: "LendingClubProject"        # Update to match your project name
+
+# -----------------------------------------------------------------------------
+# Default compute settings (can be overridden per step)
+# -----------------------------------------------------------------------------
+defaults:
+  environment: "LendingClubProject"    # Domino compute environment
+  hardware_tier: "Small"
+  on_failure: stop                     # Stop the flow on any step failure
+
+# -----------------------------------------------------------------------------
+# Steps
+# -----------------------------------------------------------------------------
+steps:
+
+  # ---------------------------------------------------------------------------
+  # Step 1 — Ingest raw data from S3
+  # ---------------------------------------------------------------------------
+  - id: ingest
+    name: "Ingest Raw Data from S3"
+    description: >
+      Pulls the latest LendingClub loan data from the S3 data source
+      and writes it to the Domino Dataset as lending_raw.csv.
+    command: "python scripts/ingest.py"
+    hardware_tier: "Small"
+    outputs:
+      - path: "/domino/datasets/local/${DOMINO_PROJECT_NAME}/lending_raw.csv"
+        description: "Raw loan data from S3"
+
+  # ---------------------------------------------------------------------------
+  # Step 2 — Preprocess
+  # ---------------------------------------------------------------------------
+  - id: preprocess
+    name: "Feature Engineering & Preprocessing"
+    description: >
+      Cleans raw data, engineers features, encodes categoricals,
+      creates the is_default target, and writes lending_clean.csv.
+    command: >
+      python scripts/preprocess.py
+      --input /domino/datasets/local/${DOMINO_PROJECT_NAME}/lending_raw.csv
+      --output /domino/datasets/local/${DOMINO_PROJECT_NAME}/lending_clean.csv
+    depends_on:
+      - ingest
+    hardware_tier: "Small"
+    inputs:
+      - path: "/domino/datasets/local/${DOMINO_PROJECT_NAME}/lending_raw.csv"
+    outputs:
+      - path: "/domino/datasets/local/${DOMINO_PROJECT_NAME}/lending_clean.csv"
+        description: "Cleaned and engineered feature set"
+
+  # ---------------------------------------------------------------------------
+  # Step 3 — Train sklearn Random Forest
+  # ---------------------------------------------------------------------------
+  - id: train_sklearn
+    name: "Train sklearn Random Forest"
+    description: "Trains a Random Forest classifier and logs metrics to MLflow."
+    command: "python scripts/train_sklearn.py"
+    depends_on:
+      - preprocess
+    hardware_tier: "Medium"
+    inputs:
+      - path: "/domino/datasets/local/${DOMINO_PROJECT_NAME}/lending_clean.csv"
+    outputs:
+      - path: "models/sklearn_rf_model.pkl"
+        description: "Serialised Random Forest model"
+
+  # ---------------------------------------------------------------------------
+  # Step 4 — Train XGBoost
+  # ---------------------------------------------------------------------------
+  - id: train_xgboost
+    name: "Train XGBoost Classifier"
+    description: "Trains an XGBoost classifier and logs metrics to MLflow."
+    command: "python scripts/train_xgboost.py"
+    depends_on:
+      - preprocess
+    hardware_tier: "Medium"
+    inputs:
+      - path: "/domino/datasets/local/${DOMINO_PROJECT_NAME}/lending_clean.csv"
+    outputs:
+      - path: "models/xgboost_model.pkl"
+        description: "Serialised XGBoost model"
+
+  # ---------------------------------------------------------------------------
+  # Step 5 — Train H2O AutoML
+  # ---------------------------------------------------------------------------
+  - id: train_h2o
+    name: "Train H2O AutoML"
+    description: "Runs H2O AutoML and logs the best model metrics to MLflow."
+    command: "python scripts/train_h2o.py"
+    depends_on:
+      - preprocess
+    hardware_tier: "Large"             # H2O benefits from more memory
+    inputs:
+      - path: "/domino/datasets/local/${DOMINO_PROJECT_NAME}/lending_clean.csv"
+    outputs:
+      - path: "models/"
+        description: "H2O best model artifact directory"
+
+  # ---------------------------------------------------------------------------
+  # Step 6 — Evaluate and select best model
+  # ---------------------------------------------------------------------------
+  - id: evaluate
+    name: "Evaluate & Select Best Model"
+    description: >
+      Queries MLflow for the latest experiment runs, compares AUC scores
+      across all three frameworks, selects the best model, and writes
+      evaluation_result.json with the outcome and best model path.
+    command: "python scripts/evaluate.py"
+    depends_on:
+      - train_sklearn
+      - train_xgboost
+      - train_h2o
+    hardware_tier: "Small"
+    outputs:
+      - path: "results/evaluation_result.json"
+        description: "Best model details and AUC gate result"
+
+  # ---------------------------------------------------------------------------
+  # Step 7a — Promote to endpoint (conditional: AUC > 0.80)
+  # ---------------------------------------------------------------------------
+  - id: promote
+    name: "Promote Best Model to Endpoint"
+    description: >
+      Updates the live Domino scoring endpoint with the best model
+      from the current training run. Only runs if AUC > 0.80.
+    command: "python scripts/promote.py"
+    depends_on:
+      - evaluate
+    condition: "outputs.evaluate.auc > 0.80"
+    hardware_tier: "Small"
+    inputs:
+      - path: "results/evaluation_result.json"
+    notifications:
+      on_success:
+        message: >
+          ✅ Model promoted successfully.
+          New model is live on the LendingClub scoring endpoint.
+
+  # ---------------------------------------------------------------------------
+  # Step 7b — Alert and hold (conditional: AUC ≤ 0.80)
+  # ---------------------------------------------------------------------------
+  - id: alert_hold
+    name: "Alert — Model Below Threshold"
+    description: >
+      Sends an alert notification and halts promotion when the best
+      model AUC does not meet the 0.80 threshold. Model is NOT promoted.
+    command: "python scripts/alert.py --reason 'AUC below 0.80 threshold'"
+    depends_on:
+      - evaluate
+    condition: "outputs.evaluate.auc <= 0.80"
+    hardware_tier: "Small"
+    notifications:
+      on_success:
+        message: >
+          ⚠️  Model not promoted. Best AUC did not meet the 0.80 threshold.
+          Review MLflow experiments and investigate before rerunning.
+
+# -----------------------------------------------------------------------------
+# Schedule — monthly retraining (Lab 5.4)
+# Uncomment to enable after completing the manual run in Lab 5.3
+# -----------------------------------------------------------------------------
+# schedule:
+#   cron: "0 6 1 * *"                  # 06:00 UTC on the 1st of every month
+#   enabled: false                     # Enable once validated in workshop
+#   notify_on_start: true
+
+# -----------------------------------------------------------------------------
+# Notifications
+# -----------------------------------------------------------------------------
+notifications:
+  on_flow_success:
+    message: "LendingClub retraining pipeline completed successfully."
+  on_flow_failure:
+    message: >
+      LendingClub retraining pipeline failed.
+      Check step logs in the Domino Flows UI for details.
+  recipients:
+    - "your-email@company.com"         # Update with your address

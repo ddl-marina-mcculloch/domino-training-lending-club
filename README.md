@@ -276,7 +276,7 @@ The response will include:
 | `risk_score` | Inverted score (100 = safest, 0 = riskiest) |
 | `risk_tier` | Low / Medium / High |
 | `recommendation` | Approve / Review / Decline |
-| `shap_values` | Top 5 features driving the decision |
+| `shap_values` | Top 5 features driving the decision (if shap was used) |
 
 Try modifying `dti` from 18.5 to 45.0 and observe how the probability and recommendation change.
 

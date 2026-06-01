@@ -278,7 +278,7 @@ The response will include:
 | `recommendation` | Approve / Review / Decline |
 | `shap_values` | Top 5 features driving the decision (if shap was used) |
 
-Try modifying `dti` from 18.5 to 45.0 and observe how the probability and recommendation change.
+Try modifying the values and observe how the probability and recommendation change.
 
 **You've tested your scoring endpoint!**
 

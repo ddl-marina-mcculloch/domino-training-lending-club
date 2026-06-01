@@ -306,7 +306,7 @@ def _get_shap_explanation(explainer, feature_vector: pd.DataFrame,
 # ---------------------------------------------------------------------------
 # Main predict function - called by Domino Model API
 # ---------------------------------------------------------------------------
-def predict(data: dict) -> dict:
+def predict(**data) -> dict:
     """
     Score a single loan application for default risk.
     """

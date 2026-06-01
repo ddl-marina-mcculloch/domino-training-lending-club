@@ -1,28 +1,36 @@
 """
 predict.py
-----------
+
 Scoring function for the LendingClub loan default prediction endpoint.
-Loaded by the Domino Model API — exposes a single `predict()` function.
+Loaded by the Domino Model API - exposes a single `predict()` function.
 
 Returns:
-    - default_probability : float  (0–1)
+    - default_probability : float  (0-1)
     - risk_tier           : str    (Low / Medium / High)
-    - risk_score          : int    (0–100, inverted probability for readability)
+    - risk_score          : int    (0-100, inverted probability for readability)
     - recommendation      : str    (Approve / Review / Decline)
     - shap_values         : dict   (top 5 feature contributions for explainability)
 
 Sample request:
     {
-      "data": {
-        "loan_amnt": 15000,
-        "int_rate": 13.5,
-        "grade": "C",
-        "annual_inc": 65000,
-        "dti": 18.5,
-        "home_ownership": "RENT",
-        "purpose": "debt_consolidation",
-        "term": "36"
-      }
+        "data": {
+            "loan_amnt": 15000,
+            "int_rate": 13.5,
+            "grade": "C",
+            "annual_inc": 65000,
+            "dti": 18.5,
+            "home_ownership": "RENT",
+            "purpose": "debt_consolidation",
+            "term": "36",
+            "emp_length": 5.0,
+            "fico_range_low": 680,
+            "fico_range_high": 684,
+            "inq_last_6mths": 1,
+            "mort_acc": 0,
+            "bc_util": 45.0,
+            "num_bc_tl": 3,
+            "earliest_cr_line": "2010-01-01"
+        }
     }
 """
 
@@ -32,7 +40,7 @@ import logging
 import numpy as np
 import pandas as pd
 
-# SHAP — optional, gracefully degrades if not installed
+# SHAP - optional, gracefully degrades if not installed
 try:
     import shap
     SHAP_AVAILABLE = True
@@ -49,15 +57,15 @@ log = logging.getLogger(__name__)
 # Paths
 # ---------------------------------------------------------------------------
 PROJECT_NAME = os.environ.get("DOMINO_PROJECT_NAME", "LendingClubProject")
-MODEL_PATH   = os.path.join(os.path.dirname(__file__), "..", "models", "xgboost_model.pkl")
+MODEL_PATH   = os.path.join(os.path.dirname(__file__), "..", "models", "sklearn_rf_model.pkl")
 
 # ---------------------------------------------------------------------------
 # Risk tier thresholds
 # ---------------------------------------------------------------------------
 THRESHOLDS = {
-    "low":    0.15,   # default_probability < 0.15  → Low
-    "medium": 0.35,   # 0.15 <= probability < 0.35  → Medium
-                      # probability >= 0.35          → High
+    "low":    0.15,   # default_probability < 0.15  -> Low
+    "medium": 0.35,   # 0.15 <= probability < 0.35  -> Medium
+                      # probability >= 0.35          -> High
 }
 
 RECOMMENDATIONS = {
@@ -74,40 +82,55 @@ RECOMMENDATIONS = {
 NUMERIC_FEATURES = [
     "loan_amnt",
     "int_rate",
-    "annual_inc",
-    "dti",
     "installment",
+    "annual_inc",
+    "emp_length",
+    "dti",
     "revol_bal",
     "revol_util",
     "open_acc",
     "total_acc",
     "pub_rec",
     "delinq_2yrs",
+    "fico_range_low",
+    "fico_range_high",
+    "inq_last_6mths",
+    "mort_acc",
+    "bc_util",
+    "num_bc_tl",
 ]
 
 FEATURE_DEFAULTS = {
-    "loan_amnt":    10000,
-    "int_rate":     12.0,
-    "annual_inc":   60000,
-    "dti":          15.0,
-    "installment":  300.0,
-    "revol_bal":    10000,
-    "revol_util":   40.0,
-    "open_acc":     8,
-    "total_acc":    20,
-    "pub_rec":      0,
-    "delinq_2yrs":  0,
+    "loan_amnt":      10000,
+    "int_rate":       12.0,
+    "installment":    300.0,
+    "annual_inc":     60000,
+    "emp_length":     5.0,
+    "dti":            15.0,
+    "revol_bal":      10000,
+    "revol_util":     40.0,
+    "open_acc":       8,
+    "total_acc":      20,
+    "pub_rec":        0,
+    "delinq_2yrs":    0,
+    "fico_range_low": 680,
+    "fico_range_high":684,
+    "inq_last_6mths": 1,
+    "mort_acc":       0,
+    "bc_util":        40.0,
+    "num_bc_tl":      3,
 }
 
 # One-hot encoded columns produced by preprocess.py
 # These must exactly match the training feature set
 OHE_COLUMNS = [
     "grade_B", "grade_C", "grade_D", "grade_E", "grade_F", "grade_G",
-    "home_ownership_OTHER", "home_ownership_OWN", "home_ownership_RENT",
-    "purpose_credit_card", "purpose_debt_consolidation", "purpose_educational",
+    "home_ownership_MORTGAGE", "home_ownership_NONE", "home_ownership_OTHER", "home_ownership_OWN",
+    "home_ownership_RENT", "purpose_credit_card", "purpose_debt_consolidation",
+    "purpose_educational",
     "purpose_home_improvement", "purpose_house", "purpose_major_purchase",
-    "purpose_medical", "purpose_moving", "purpose_other",
-    "purpose_renewable_energy", "purpose_small_business",
+    "purpose_medical", "purpose_moving", "purpose_other", "purpose_renewable_energy",
+    "purpose_small_business",
     "purpose_vacation", "purpose_wedding",
     "term_60",
     "verification_status_Source Verified", "verification_status_Verified",
@@ -120,13 +143,14 @@ ENGINEERED_FEATURES = [
     "payment_to_income",
     "has_derog",
     "credit_breadth",
+    "credit_age_years",
 ]
 
 ALL_FEATURES = NUMERIC_FEATURES + ENGINEERED_FEATURES + OHE_COLUMNS
 
 
 # ---------------------------------------------------------------------------
-# Model loader — cached after first load
+# Model loader - cached after first load
 # ---------------------------------------------------------------------------
 _model = None
 _explainer = None
@@ -153,21 +177,50 @@ def _load_model():
 # Feature engineering (mirrors preprocess.py)
 # ---------------------------------------------------------------------------
 def _engineer_features(row: dict) -> dict:
-    annual_inc  = float(row.get("annual_inc", FEATURE_DEFAULTS["annual_inc"]))
-    loan_amnt   = float(row.get("loan_amnt",  FEATURE_DEFAULTS["loan_amnt"]))
-    installment = float(row.get("installment", FEATURE_DEFAULTS["installment"]))
-    revol_util  = float(row.get("revol_util",  FEATURE_DEFAULTS["revol_util"]))
-    pub_rec     = float(row.get("pub_rec",     FEATURE_DEFAULTS["pub_rec"]))
-    delinq_2yrs = float(row.get("delinq_2yrs", FEATURE_DEFAULTS["delinq_2yrs"]))
-    open_acc    = float(row.get("open_acc",    FEATURE_DEFAULTS["open_acc"]))
-    total_acc   = float(row.get("total_acc",   FEATURE_DEFAULTS["total_acc"]))
+    annual_inc   = float(row.get("annual_inc",   FEATURE_DEFAULTS["annual_inc"]))
+    loan_amnt    = float(row.get("loan_amnt",    FEATURE_DEFAULTS["loan_amnt"]))
+    installment  = float(row.get("installment",  FEATURE_DEFAULTS["installment"]))
+    revol_util   = float(row.get("revol_util",   FEATURE_DEFAULTS["revol_util"]))
+    pub_rec      = float(row.get("pub_rec",      FEATURE_DEFAULTS["pub_rec"]))
+    delinq_2yrs  = float(row.get("delinq_2yrs",  FEATURE_DEFAULTS["delinq_2yrs"]))
+    open_acc     = float(row.get("open_acc",     FEATURE_DEFAULTS["open_acc"]))
+    total_acc    = float(row.get("total_acc",    FEATURE_DEFAULTS["total_acc"]))
+
+    # loan_to_income
+    loan_to_income = loan_amnt / annual_inc if annual_inc > 0 else 0.0
+
+    # credit_utilization: revol_util is already a percentage; normalise to 0-1
+    credit_utilization = np.clip(revol_util, 0, 100) / 100
+
+    # payment_to_income: monthly installment annualised as fraction of income
+    payment_to_income = (installment * 12) / annual_inc if annual_inc > 0 else 0.0
+
+    # has_derog: any derogatory public record or delinquency
+    has_derog = int((pub_rec > 0) or (delinq_2yrs > 0))
+
+    # credit_breadth: fraction of accounts that are open
+    credit_breadth = open_acc / total_acc if total_acc > 0 else 0.0
+
+    # credit_age_years: years since earliest credit line
+    earliest_cr_line_raw = row.get("earliest_cr_line", None)
+    if earliest_cr_line_raw is not None:
+        try:
+            ecl = pd.to_datetime(earliest_cr_line_raw, format="%Y-%m-%d", errors="coerce")
+            if pd.isna(ecl):
+                ecl = pd.to_datetime(earliest_cr_line_raw, errors="coerce")
+            credit_age_years = (pd.Timestamp("today") - ecl).days / 365.25 if not pd.isna(ecl) else 10.0
+        except Exception:
+            credit_age_years = 10.0
+    else:
+        credit_age_years = 10.0
 
     return {
-        "loan_to_income":     loan_amnt / annual_inc if annual_inc > 0 else 0,
-        "credit_utilization": min(revol_util, 100) / 100,
-        "payment_to_income":  (installment * 12) / annual_inc if annual_inc > 0 else 0,
-        "has_derog":          int(pub_rec > 0 or delinq_2yrs > 0),
-        "credit_breadth":     open_acc / total_acc if total_acc > 0 else 0,
+        "loan_to_income":    loan_to_income,
+        "credit_utilization": credit_utilization,
+        "payment_to_income": payment_to_income,
+        "has_derog":         has_derog,
+        "credit_breadth":    credit_breadth,
+        "credit_age_years":  credit_age_years,
     }
 
 
@@ -211,33 +264,23 @@ def _build_feature_vector(data: dict) -> pd.DataFrame:
         row[feat] = float(data.get(feat, FEATURE_DEFAULTS.get(feat, 0)))
 
     # Engineered features
-    row.update(_engineer_features(data))
+    eng = _engineer_features(data)
+    row.update(eng)
 
     # One-hot encoded features
-    row.update(_encode_categoricals(data))
+    ohe = _encode_categoricals(data)
+    row.update(ohe)
 
-    df = pd.DataFrame([row])[ALL_FEATURES]
-    return df
-
-
-# ---------------------------------------------------------------------------
-# Risk tier & recommendation
-# ---------------------------------------------------------------------------
-def _get_risk_tier(prob: float) -> str:
-    if prob < THRESHOLDS["low"]:
-        return "Low"
-    elif prob < THRESHOLDS["medium"]:
-        return "Medium"
-    return "High"
+    return pd.DataFrame([row])[ALL_FEATURES]
 
 
 # ---------------------------------------------------------------------------
 # SHAP explanation
 # ---------------------------------------------------------------------------
-def _get_shap_explanation(explainer, feature_vector: pd.DataFrame, top_n: int = 5) -> dict:
+def _get_shap_explanation(explainer, feature_vector: pd.DataFrame,
+                           top_n: int = 5) -> dict:
     if explainer is None or not SHAP_AVAILABLE:
         return {}
-
     try:
         sv = explainer.shap_values(feature_vector)
         # For binary classifiers shap_values returns list [class0, class1]
@@ -246,9 +289,9 @@ def _get_shap_explanation(explainer, feature_vector: pd.DataFrame, top_n: int = 
         sv = sv[0]  # single row
 
         shap_df = pd.DataFrame({
-            "feature":    feature_vector.columns,
+            "feature":   feature_vector.columns,
             "shap_value": sv,
-            "abs_shap":   np.abs(sv),
+            "abs_shap":  np.abs(sv),
         }).sort_values("abs_shap", ascending=False).head(top_n)
 
         return {
@@ -261,28 +304,27 @@ def _get_shap_explanation(explainer, feature_vector: pd.DataFrame, top_n: int = 
 
 
 # ---------------------------------------------------------------------------
-# Main predict function — called by Domino Model API
+# Main predict function - called by Domino Model API
 # ---------------------------------------------------------------------------
 def predict(data: dict) -> dict:
     """
     Score a single loan application for default risk.
-
-    Args:
-        data: dict of loan features (see sample request in module docstring)
-
-    Returns:
-        dict with default_probability, risk_score, risk_tier,
-        recommendation, and shap_values
     """
     model, explainer = _load_model()
 
-    # Build feature vector
     feature_vector = _build_feature_vector(data)
 
-    # Score
     prob = float(model.predict_proba(feature_vector)[0][1])
-    risk_tier      = _get_risk_tier(prob)
-    risk_score     = int(round((1 - prob) * 100))   # 100 = safest, 0 = riskiest
+
+    # Risk tier
+    if prob < THRESHOLDS["low"]:
+        risk_tier = "Low"
+    elif prob < THRESHOLDS["medium"]:
+        risk_tier = "Medium"
+    else:
+        risk_tier = "High"
+
+    risk_score     = int(round((1 - prob) * 100))
     recommendation = RECOMMENDATIONS[risk_tier]
 
     # SHAP explanation
@@ -296,7 +338,7 @@ def predict(data: dict) -> dict:
         "shap_values":         shap_values,
     }
 
-    log.info(f"Scored loan — prob: {prob:.4f}, tier: {risk_tier}, rec: {recommendation}")
+    log.info(f"Scored loan - prob: {prob:.4f}, tier: {risk_tier}, rec: {recommendation}")
     return result
 
 
@@ -305,21 +347,29 @@ def predict(data: dict) -> dict:
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
     sample = {
-        "loan_amnt":          15000,
-        "int_rate":           13.5,
-        "grade":              "C",
-        "annual_inc":         65000,
-        "dti":                18.5,
-        "home_ownership":     "RENT",
-        "purpose":            "debt_consolidation",
-        "term":               "36",
-        "installment":        350.0,
-        "revol_bal":          12000,
-        "revol_util":         55.0,
-        "open_acc":           7,
-        "total_acc":          18,
-        "pub_rec":            0,
-        "delinq_2yrs":        0,
+        "loan_amnt":           15000,
+        "int_rate":            13.5,
+        "grade":               "C",
+        "annual_inc":          65000,
+        "dti":                 18.5,
+        "home_ownership":      "RENT",
+        "purpose":             "debt_consolidation",
+        "term":                "36",
+        "installment":         350.0,
+        "revol_bal":           12000,
+        "revol_util":          55.0,
+        "open_acc":            7,
+        "total_acc":           18,
+        "pub_rec":             0,
+        "delinq_2yrs":         0,
+        "emp_length":          5.0,
+        "fico_range_low":      680,
+        "fico_range_high":     684,
+        "inq_last_6mths":      1,
+        "mort_acc":            0,
+        "bc_util":             45.0,
+        "num_bc_tl":           3,
+        "earliest_cr_line":    "2010-01-01",
         "verification_status": "Verified",
     }
 

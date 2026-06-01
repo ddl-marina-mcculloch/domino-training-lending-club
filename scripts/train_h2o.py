@@ -105,6 +105,32 @@ class H2OModelWrapper:
     def predict(self, X):
         return (self.predict_proba(X)[:, 1] >= 0.5).astype(int)
 
+    def __getstate__(self):
+        import h2o, tempfile, os
+        tmp_dir = tempfile.mkdtemp()
+        model_path = h2o.save_model(model=self.h2o_model, path=tmp_dir, force=True)
+        with open(model_path, 'rb') as f:
+            model_bytes = f.read()
+        os.remove(model_path)
+        os.rmdir(tmp_dir)
+        return {'model_bytes': model_bytes, 'feature_names': self.feature_names}
+
+    def __setstate__(self, state):
+        import h2o, tempfile, os
+        try:
+            h2o.cluster()
+        except Exception:
+            h2o.init(nthreads=-1, max_mem_size="4G")
+            h2o.no_progress()
+        tmp_dir = tempfile.mkdtemp()
+        tmp_path = os.path.join(tmp_dir, 'h2o_model')
+        with open(tmp_path, 'wb') as f:
+            f.write(state['model_bytes'])
+        self.h2o_model = h2o.load_model(tmp_path)
+        os.remove(tmp_path)
+        os.rmdir(tmp_dir)
+        self.feature_names = state['feature_names']
+
 # ---------------------------------------------------------------------------
 # Evaluate
 # ---------------------------------------------------------------------------

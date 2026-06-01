@@ -1,5 +1,1 @@
 shap
-dash
-dash-bootstrap-components
-plotly
-requests

@@ -40,7 +40,7 @@ log = logging.getLogger(__name__)
 # Domino endpoint config
 # ---------------------------------------------------------------------------
 MODEL_API_URL = os.environ.get("DOMINO_MODEL_API_URL", "")
-MODEL_API_KEY = os.environ.get("DOMINO_MODEL_API_KEY", "")
+MODEL_API_KEY = os.environ.get("DOMINO_USER_API_KEY", "")
 
 # ---------------------------------------------------------------------------
 # App init
@@ -451,4 +451,4 @@ def _empty_shap() -> go.Figure:
 # Entry point
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8888, debug=False)
+    app.run(host="0.0.0.0", port=8887, debug=False)

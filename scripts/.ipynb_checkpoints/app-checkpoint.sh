@@ -13,7 +13,7 @@ echo "Starting Loan Officer Dashboard..."
 echo "Model API URL: ${DOMINO_MODEL_API_URL:-'NOT SET — update in App environment variables'}"
 
 # Install any missing dependencies at startup
-pip install mnt/code/requirements.txt --quiet
+pip install dash dash-bootstrap-components plotly requests --quiet
 
 # Launch Dash app
 python app.py

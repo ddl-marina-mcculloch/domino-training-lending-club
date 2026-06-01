@@ -151,7 +151,7 @@ Click **Stop** to stop the workspace instance.
 
 ## Lab 2.5 — Complete Project Tasks
 
-Navigate to **Code** in your project. Click on `EDA_lending.ipynb` and select **Link to Task**. Choose the *Explore Loan Data* task.
+Navigate to **Artifacts** in your project. Click on `results` folder and select **Link to Task** on the notebook outputs. Choose the *Explore Loan Data* task.
 
 Navigate back to **Tasks**, open *Explore Loan Data*, and mark it as complete.
 
@@ -199,7 +199,9 @@ Select all three runs using the checkboxes and click **Compare**. Review:
 - How do precision and recall trade off across models?
 - What are the top feature importances in each run?
 
-The XGBoost model typically performs best on this dataset and will be used for deployment.
+The Sklearn Random Forest identified the most actual high-risk borrowers while maintaining competitive precision. It was also the fastest to train (14 seconds).
+ 
+This is the recommended model from the comparison. We'll use this for deployment.  
 
 Link the best-performing run to the *Train Credit Risk Model* task and mark it as complete.
 

@@ -199,7 +199,9 @@ Select all three runs using the checkboxes and click **Compare**. Review:
 - How do precision and recall trade off across models?
 - What are the top feature importances in each run?
 
-The XGBoost model typically performs best on this dataset and will be used for deployment.
+The Sklearn Random Forest identified the most actual high-risk borrowers while maintaining competitive precision. It was also the fastest to train (14 seconds).
+ 
+This is the recommended model from the comparison. We'll use this for deployment.  
 
 Link the best-performing run to the *Train Credit Risk Model* task and mark it as complete.
 

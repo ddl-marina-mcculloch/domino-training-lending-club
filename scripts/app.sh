@@ -14,4 +14,5 @@ echo "Model API URL: ${DOMINO_MODEL_API_URL:-'NOT SET — update in App environm
 pip install dash dash-bootstrap-components plotly requests --quiet
 
 # Launch Dash app
+
 python3 scripts/app.py

@@ -327,7 +327,7 @@ Mark the *Deploy Scoring API* task as complete. You've completed 3 tasks in Domi
 
 # Section 4 — Model Monitoring
 
-## Lab 4.1 — Set Up a Model Monitor
+## Lab 4.1 — Set Up a Domino Data Source for Model Monitor
 
 ***Documentation: [Domino Model Monitor](https://docs.dominodatalab.com/en/latest/user_guide/model-monitor/)***
 

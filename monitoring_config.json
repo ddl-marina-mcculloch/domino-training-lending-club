@@ -1,0 +1,337 @@
+{
+    "variables": [
+        {
+            "name": "loan_amnt",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.029045
+        },
+        {
+            "name": "int_rate",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.194424
+        },
+        {
+            "name": "installment",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.033736
+        },
+        {
+            "name": "annual_inc",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.031701
+        },
+        {
+            "name": "emp_length",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.01753
+        },
+        {
+            "name": "dti",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.048361
+        },
+        {
+            "name": "revol_bal",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.03263
+        },
+        {
+            "name": "revol_util",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.026602
+        },
+        {
+            "name": "open_acc",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.019437
+        },
+        {
+            "name": "total_acc",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.021519
+        },
+        {
+            "name": "pub_rec",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.002449
+        },
+        {
+            "name": "delinq_2yrs",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.002981
+        },
+        {
+            "name": "fico_range_low",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.037809
+        },
+        {
+            "name": "fico_range_high",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.038251
+        },
+        {
+            "name": "inq_last_6mths",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.01045
+        },
+        {
+            "name": "mort_acc",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.019089
+        },
+        {
+            "name": "bc_util",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.028348
+        },
+        {
+            "name": "num_bc_tl",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.016725
+        },
+        {
+            "name": "loan_to_income",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.054577
+        },
+        {
+            "name": "credit_utilization",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.027294
+        },
+        {
+            "name": "payment_to_income",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.045673
+        },
+        {
+            "name": "has_derog",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.0033
+        },
+        {
+            "name": "credit_breadth",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.034369
+        },
+        {
+            "name": "credit_age_years",
+            "valueType": "numerical",
+            "variableType": "feature",
+            "featureImportance": 0.028534
+        },
+        {
+            "name": "grade_B",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.023966
+        },
+        {
+            "name": "grade_C",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.014173
+        },
+        {
+            "name": "grade_D",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.018036
+        },
+        {
+            "name": "grade_E",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.019088
+        },
+        {
+            "name": "grade_F",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.006561
+        },
+        {
+            "name": "grade_G",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.000559
+        },
+        {
+            "name": "home_ownership_MORTGAGE",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.009259
+        },
+        {
+            "name": "home_ownership_NONE",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.0
+        },
+        {
+            "name": "home_ownership_OTHER",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.0
+        },
+        {
+            "name": "home_ownership_OWN",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.001694
+        },
+        {
+            "name": "home_ownership_RENT",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.007165
+        },
+        {
+            "name": "purpose_credit_card",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.003948
+        },
+        {
+            "name": "purpose_debt_consolidation",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.003808
+        },
+        {
+            "name": "purpose_educational",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.0
+        },
+        {
+            "name": "purpose_home_improvement",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.000767
+        },
+        {
+            "name": "purpose_house",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.0
+        },
+        {
+            "name": "purpose_major_purchase",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.000168
+        },
+        {
+            "name": "purpose_medical",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 3.6e-05
+        },
+        {
+            "name": "purpose_moving",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 5.4e-05
+        },
+        {
+            "name": "purpose_other",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.000698
+        },
+        {
+            "name": "purpose_renewable_energy",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.0
+        },
+        {
+            "name": "purpose_small_business",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.000133
+        },
+        {
+            "name": "purpose_vacation",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.000109
+        },
+        {
+            "name": "purpose_wedding",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.0
+        },
+        {
+            "name": "term_60",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.075848
+        },
+        {
+            "name": "verification_status_Source Verified",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.004197
+        },
+        {
+            "name": "verification_status_Verified",
+            "valueType": "categorical",
+            "variableType": "feature",
+            "featureImportance": 0.004902
+        },
+        {
+            "name": "is_default",
+            "valueType": "categorical",
+            "variableType": "prediction"
+        },
+        {
+            "name": "default_probability",
+            "valueType": "numerical",
+            "variableType": "prediction_probability"
+        }
+    ],
+    "datasetDetails": {
+        "name": "lending_clean.csv",
+        "datasetType": "file",
+        "datasetConfig": {
+            "path": "lending_clean.csv",
+            "fileFormat": "csv"
+        },
+        "datasourceName": "lending-club-data",
+        "datasourceType": "s3"
+    },
+    "modelMetadata": {
+        "name": "lending-club-sklearn-rf",
+        "modelType": "classification",
+        "version": "1",
+        "description": "LendingClub loan default prediction - Random Forest classifier",
+        "author": "marina_mcculloch"
+    }
+}

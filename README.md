@@ -5,7 +5,7 @@ Domino Training v6.2.0
 
 #### In this workshop you will work through an end-to-end ML workflow using LendingClub loan data to build a credit risk scoring system. The labs are broken into six sections:
 
-* Read in data from a live S3 data source
+* Upload raw training data to a Domino Dataset
 * Explore and prepare the data in JupyterLab
 * Train multiple models across different frameworks and compare performance in MLflow
 * Deploy a real-time credit scoring API endpoint

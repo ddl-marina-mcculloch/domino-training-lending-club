@@ -203,7 +203,7 @@ The Sklearn Random Forest identified the most actual high-risk borrowers while m
  
 This is the recommended model from the comparison. We'll use this for deployment.  
 
-Link the best-performing run to the *Train Credit Risk Model* task and mark it as complete.
+Find the Train Credit Risk Model task and mark it as complete!
 
 **You've compared experiments and selected your best model!**
 
@@ -276,9 +276,9 @@ The response will include:
 | `risk_score` | Inverted score (100 = safest, 0 = riskiest) |
 | `risk_tier` | Low / Medium / High |
 | `recommendation` | Approve / Review / Decline |
-| `shap_values` | Top 5 features driving the decision |
+| `shap_values` | Top 5 features driving the decision (if shap was used) |
 
-Try modifying `dti` from 18.5 to 45.0 and observe how the probability and recommendation change.
+Try modifying the values and observe how the probability and recommendation change.
 
 **You've tested your scoring endpoint!**
 
@@ -293,7 +293,7 @@ Before publishing the app, set the endpoint environment variables so the app can
 1. Navigate to your endpoint's **Overview** tab and copy the **Endpoint URL** and **API Key**
 2. In your project, go to **Settings > Environment Variables** and add:
    - `DOMINO_MODEL_API_URL` — your endpoint URL
-   - `DOMINO_MODEL_API_KEY` — your API key
+   - `DOMINO_MODEL_API_KEY` — your API key in Account Settings
 
 Navigate to **Deployments > App**. Enter the title *YourName Loan Officer Dashboard* and click **Publish**.
 
@@ -315,11 +315,11 @@ Enter some test applications and observe how the SHAP chart changes as you adjus
 
 ***Documentation: [App Security and Identity](https://docs.dominodatalab.com/en/latest/user_guide/cb9195/app-security-and-identity/)***
 
-Navigate to the **Permissions** tab in your app. Update permissions to **Anyone, including anonymous users**.
+Navigate to the **Access & sharing** tab in your app. Update permissions to **Anyone in Domino**.
 
-Copy the app link from the **Settings** tab and open it in a private/incognito window. Confirm you can access the app without being logged into Domino.
+Copy the app link from the **Settings** tab and ask your team mates to open it in new window. Confirm they can access the app provided they are logged into Domino.
 
-Mark the *Deploy Scoring API* task as complete.
+Mark the *Deploy Scoring API* task as complete. You've completed 3 tasks in Domino!
 
 **You've shared your loan officer dashboard!**
 

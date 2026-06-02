@@ -49,6 +49,7 @@ app = dash.Dash(
     __name__,
     external_stylesheets=[dbc.themes.FLATLY],
     title="Loan Officer Dashboard",
+    serve_locally=True,
 )
 
 # ---------------------------------------------------------------------------

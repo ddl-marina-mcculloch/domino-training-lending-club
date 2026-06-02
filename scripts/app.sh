@@ -11,6 +11,7 @@ set -e
 
 echo "Starting Loan Officer Dashboard..."
 echo "Model API URL: ${DOMINO_MODEL_API_URL:-'NOT SET — update in App environment variables'}"
+pip install dash dash-bootstrap-components plotly requests --quiet
 
 # Launch Dash app
 python3 scripts/app.py

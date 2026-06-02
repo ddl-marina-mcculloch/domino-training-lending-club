@@ -5,11 +5,12 @@ Domino Training v6.2.0
 
 #### In this workshop you will work through an end-to-end ML workflow using LendingClub loan data to build a credit risk scoring system. The labs are broken into six sections:
 
-* Read in data from a live S3 data source
+* Upload raw training data to a Domino Dataset
 * Explore and prepare the data in JupyterLab
 * Train multiple models across different frameworks and compare performance in MLflow
 * Deploy a real-time credit scoring API endpoint
 * Build and share a loan officer dashboard with SHAP explainability
+* Set up an S3 Data Source in Model Monitoring
 * Monitor your model for drift and trigger retraining
 * Orchestrate the full pipeline with Domino Flows
 * Build an agentic GenAI system that explains credit decisions using an LLM
@@ -327,21 +328,47 @@ Mark the *Deploy Scoring API* task as complete. You've completed 3 tasks in Domi
 
 # Section 4 — Model Monitoring
 
-## Lab 4.1 — Set Up a Model Monitor
+## Lab 4.1 — Set Up a Domino Data Source for Model Monitor
 
-***Documentation: [Domino Model Monitor](https://docs.dominodatalab.com/en/latest/user_guide/model-monitor/)***
+### Part 1: Connect a Data Source
 
-Navigate to **Deployments > Model Monitor** and click **Set Up Monitor** on your endpoint.
+Before registering a model with Domino Model Monitor, you need to connect the storage location where your training data lives. 
 
-Configure the monitor using the settings in `monitoring/drift_config.yaml`:
+For this activity, we're going to demonstrate how you can do this with a Domino Data Source.
 
-- **Prediction type**: Classification
-- **Target column**: `is_default`
-- **Positive class**: 1
+This tells the monitor where to read baseline data from.
 
-Upload `monitoring/baseline_stats.json` as the baseline dataset (generated in the next lab).
+1. From the main homepage, go to **Deploy** > **Model Monitor**
+2. Click **Monitoring Data Sources** in the left hand pane. Click on **Add Data Source**
+3. Fill in the details for your storage type. For Amazon S3:
+   - **Data Source Name**: a unique name you will reference later (e.g. `lending-club-data`)
+   - **S3 Bucket Name**: the name of the S3 bucket (e.g. `lending-club-mm`)
+   - **S3 Region**: the AWS region of your bucket (e.g. `us-west-1`)
+   - **Authentication**: enter your **Access Key** and **Secret Key**
+4. Click **Save** to create the data source
+
+> **Note:** The data source must have **read and list** access to the bucket. Upload `lending_clean.csv` to your S3 bucket — this is the training data used as the baseline for drift detection.
 
 ---
+
+### Part 2: Register the Model Using monitoring_config.json
+
+With the data source configured, you can now register the sklearn Random Forest model with Model Monitor using the `monitoring_config.json` file already prepared in this project.
+
+1. From the main navigation, go to **Model Monitor**
+2. On the **Models** page, click **Register Model** > **Upload Model Config File**
+3. In the **Register Model** window, upload the file `monitoring_config.json` from the project root
+
+   This file defines:
+   - All 51 input features with their value types (`numerical` or `categorical`) and feature importances
+   - The prediction column `is_default` (categorical)
+   - The prediction probability column `default_probability` (numerical)
+   - The dataset details pointing to `lending_clean.csv` on the `lending-club-data` data source
+   - Model metadata: name `lending-club-sklearn-rf`, type `classification`
+
+4. Click **Register** to complete model registration
+
+Once registered, Domino Model Monitor will compute baseline statistics from `lending_clean.csv` and be ready to detect drift when prediction data is ingested.
 
 ## Lab 4.2 — Generate a Baseline and Define Drift Metrics
 

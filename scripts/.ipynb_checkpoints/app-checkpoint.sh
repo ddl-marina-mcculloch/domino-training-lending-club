@@ -13,4 +13,4 @@ echo "Starting Loan Officer Dashboard..."
 echo "Model API URL: ${DOMINO_MODEL_API_URL:-'NOT SET — update in App environment variables'}"
 
 # Launch Dash app
-python3 app.py
+python3 scripts/app.py

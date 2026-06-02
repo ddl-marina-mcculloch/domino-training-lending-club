@@ -355,7 +355,7 @@ This tells the monitor where to read baseline data from.
 
 With the data source configured, you can now register the sklearn Random Forest model with Model Monitor using the `monitoring_config.json` file already prepared in this project.
 
-1. From the main navigation, go to **Model Monitor**
+1. In the Model Monitor navigation, go to **Models**
 2. On the **Models** page, click **Register Model** > **Upload Model Config File**
 3. In the **Register Model** window, upload the file `monitoring_config.json` from the project root
 

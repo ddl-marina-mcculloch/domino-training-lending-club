@@ -48,8 +48,8 @@ MODEL_API_KEY = os.environ.get("DOMINO_USER_API_KEY", "")
 app = dash.Dash(
     __name__,
     external_stylesheets=[dbc.themes.FLATLY],
+    requests_pathname_prefix="/",
     title="Loan Officer Dashboard",
-    serve_locally=True,
 )
 
 # ---------------------------------------------------------------------------

@@ -45,10 +45,13 @@ MODEL_API_KEY = os.environ.get("DOMINO_USER_API_KEY", "")
 # ---------------------------------------------------------------------------
 # App init
 # ---------------------------------------------------------------------------
+runurl = os.environ.get("DOMINO_RUN_HOST_PATH")
+
 app = dash.Dash(
     __name__,
     external_stylesheets=[dbc.themes.FLATLY],
     requests_pathname_prefix="/",
+    requests_pathname_prefix=runurl,
     title="Loan Officer Dashboard",
 )
 

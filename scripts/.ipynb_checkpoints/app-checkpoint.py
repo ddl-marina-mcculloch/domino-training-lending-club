@@ -7,7 +7,7 @@ Provides a form-based UI for loan officers to:
   - Enter loan application details
   - Submit to the deployed Domino Model API endpoint
   - View default probability, risk tier, recommendation
-  - Inspect a SHAP waterfall chart explaining the decision
+  - Inspect a SHAP waterfall chart explaining the decision (if SHAP installed)
 
 Environment variables required:
     DOMINO_MODEL_API_URL    : Full URL of the deployed Domino endpoint

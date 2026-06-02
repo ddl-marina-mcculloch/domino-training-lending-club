@@ -80,15 +80,15 @@ Assign yourself as owner on each. Click **Save**.
 
 # Section 2 — Execute Code
 
-## Lab 2.1 — Add a Data Source
+## Lab 2.1 — Add raw data to a Domino Dataset
 
-***Documentation: [Add a Data Source to a Project](https://docs.dominodatalab.com/en/latest/user_guide/fa5f3a/use-data-sources/)***
+***Documentation: [Add a Data Source to a Project](https://docs.dominodatalab.com/en/latest/user_guide/ba5bad/work-with-domino-datasets/)***
 
-Navigate to **Data > Data Sources** in the left pane. Click **Add a Data Source**.
+Navigate to **Data > Datasets** in the left pane. Click on your project dataset. 
 
-Search for **LendingClubWorkshop**. You will see an Amazon S3 data source created by your admin. Select it and click **Add to Project**.
+Upload **lending_raw.csv**. You will see a new CSV file appear in your Dataset overview.
 
-**You've added a data source to your project!**
+**You've added training data to your Domino project!**
 
 ---
 

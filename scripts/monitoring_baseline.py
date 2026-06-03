@@ -16,7 +16,7 @@ Usage:
 
 Data source:
     Reads training data from the 'lending-club-data' Domino Data Source (S3),
-    falling back to a local Domino Dataset path if the SDK is unavailable.
+    falling back to object_store if injected; raises RuntimeError otherwise.
 
 Model Monitor integration:
     Uses the Domino Model Monitor REST API to register the simulated drift CSV
@@ -59,8 +59,8 @@ DOMINO_USER_API_KEY = os.environ.get("DOMINO_USER_API_KEY", "")
 DATA_SOURCE_NAME = "lending-club-data"
 TRAINING_FILENAME = "lending_clean.csv"
 
-# Local dataset fallback path
-LOCAL_DATA_PATH = f"/domino/datasets/local/{PROJECT_NAME}/lending_clean.csv"
+# Local data source fallback path
+LOCAL_DATA_PATH = f"/domino/datasources/{DATA_SOURCE_NAME}/{TRAINING_FILENAME}"
 
 # ---------------------------------------------------------------------------
 # Features to monitor — most impactful per SHAP analysis
@@ -131,11 +131,10 @@ def parse_args():
 def load_sample(source_name, filename, n, random_state):
     """
     Load training data from the named Domino Data Source.
-    Falls back to local Domino Dataset path if the SDK is unavailable.
+    Falls back to object_store if injected; raises RuntimeError otherwise.
     Mirrors the pattern established in ingest.py.
     """
     try:
-        from domino_data.vectordb import domino_is_connected
         import domino
 
         log.info(f"Connecting to Domino Data Source: {source_name}")
@@ -155,16 +154,25 @@ def load_sample(source_name, filename, n, random_state):
         log.info(f"Loaded {len(df):,} rows from data source '{source_name}'")
 
     except ImportError:
-        # Domino SDK not available — use object_store if injected, else local path
+        # Domino SDK not available — use object_store if injected, else raise error
+        # Mirrors the pattern established in ingest.py
         if "object_store" in dir():
             log.info(f"Using injected object_store to fetch '{filename}'...")
             raw = object_store.get(filename)
             df  = pd.read_csv(StringIO(str(raw, "utf-8")), low_memory=False)
         else:
             log.warning(
-                f"Domino SDK not available. Falling back to local dataset: {LOCAL_DATA_PATH}"
+                "Domino SDK not available — add the Data Source connection snippet. "
+                "Paste your object_store snippet below to connect to the data source."
             )
-            df = pd.read_csv(LOCAL_DATA_PATH, low_memory=False)
+            # ── Paste Data Source snippet here ──────────────────────────────────
+            # object_store = ...
+            # raw = object_store.get(filename)
+            # ────────────────────────────────────────────────────────────────────
+            raise RuntimeError(
+                "Could not connect to data source. "
+                "Add the Data Source connection snippet to monitoring_baseline.py."
+            )
 
     df = df.sample(min(n, len(df)), random_state=random_state).reset_index(drop=True)
     log.info(f"Sampled {len(df):,} rows")

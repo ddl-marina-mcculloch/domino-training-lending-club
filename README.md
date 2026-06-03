@@ -87,7 +87,7 @@ Assign yourself as owner on each. Click **Save**.
 
 Navigate to **Data > Datasets** in the left pane. Click on your project dataset. 
 
-Upload **lending_raw.csv**. You will see a new CSV file appear in your Dataset overview.
+Upload **lending_raw.csv**. You'll find this in the **data** directory.You will see a new CSV file appear in your Dataset overview.
 
 **You've added training data to your Domino project!**
 
@@ -113,11 +113,9 @@ Click **Launch**.
 
 Open `notebooks/EDA_lending.ipynb` from the file browser.
 
-In the **Data** panel on the left, navigate to **Data Sources** and find the LendingClubWorkshop source. Copy the Python connection snippet into the first cell of the notebook and run it.
-
 Work through the notebook cell by cell. The notebook will:
 
-1. Load raw loan data from S3
+1. Load raw loan data from your dataset
 2. Inspect missing values and data quality
 3. Explore the target variable — default rate by loan grade, purpose, and home ownership
 4. Plot feature distributions split by defaulted vs fully paid loans
@@ -131,8 +129,6 @@ Key insights to note as you run through the notebook:
 - **Interest rate** and **grade** are the strongest predictors — Grade E/F/G loans default significantly more
 - **DTI** shows clear separation between defaulted and fully paid loans
 - Engineered features (`loan_to_income`, `credit_utilization`) add meaningful signal
-
-Rename the notebook `EDA_lending.ipynb` when complete.
 
 **You've successfully explored the loan dataset!**
 
@@ -152,7 +148,7 @@ Click **Stop** to stop the workspace instance.
 
 ## Lab 2.5 — Complete Project Tasks
 
-Navigate to **Artifacts** in your project. Click on `results` folder and select **Link to Task** on the notebook outputs. Choose the *Explore Loan Data* task.
+Navigate to **Artifacts** in your project. Click on the `results` folder and select **Link to Task** on the notebook outputs. Choose the *Explore Loan Data* task.
 
 Navigate back to **Tasks**, open *Explore Loan Data*, and mark it as complete.
 
@@ -178,7 +174,7 @@ In the **File Name or Command** field enter:
 scripts/multitrain.py
 ```
 
-Click **Start**. Watch as three job runs appear. Click into the `train_xgboost.py` job run and inspect the **Results** tab once complete — you'll see confusion matrices and feature importance charts logged automatically.
+Click **Start**. Watch as three models run as part of the multitrain job.
 
 **You've trained three credit risk models!**
 

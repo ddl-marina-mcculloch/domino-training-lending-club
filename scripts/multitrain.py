@@ -104,7 +104,7 @@ def print_experiment_summary():
         log.info(f"\n{summary.to_string(index=False)}")
 
         best_run = summary.iloc[0]
-        log.info(f"\n🏆 Best model : {best_run.get('run_name', 'N/A')} "
+        log.info(f"\n🏆 Best AUC model : {best_run.get('run_name', 'N/A')} "
                  f"(AUC: {best_run.get('AUC', 'N/A'):.4f})")
 
     except Exception as e:

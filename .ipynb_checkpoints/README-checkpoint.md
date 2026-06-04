@@ -87,7 +87,7 @@ Assign yourself as owner on each. Click **Save**.
 
 Navigate to **Data > Datasets** in the left pane. Click on your project dataset. 
 
-Upload **lending_raw.csv**. You will see a new CSV file appear in your Dataset overview.
+Upload **lending_raw.csv**. You'll find this in the **data** directory.You will see a new CSV file appear in your Dataset overview.
 
 **You've added training data to your Domino project!**
 
@@ -113,11 +113,9 @@ Click **Launch**.
 
 Open `notebooks/EDA_lending.ipynb` from the file browser.
 
-In the **Data** panel on the left, navigate to **Data Sources** and find the LendingClubWorkshop source. Copy the Python connection snippet into the first cell of the notebook and run it.
-
 Work through the notebook cell by cell. The notebook will:
 
-1. Load raw loan data from S3
+1. Load raw loan data from your dataset
 2. Inspect missing values and data quality
 3. Explore the target variable — default rate by loan grade, purpose, and home ownership
 4. Plot feature distributions split by defaulted vs fully paid loans
@@ -131,8 +129,6 @@ Key insights to note as you run through the notebook:
 - **Interest rate** and **grade** are the strongest predictors — Grade E/F/G loans default significantly more
 - **DTI** shows clear separation between defaulted and fully paid loans
 - Engineered features (`loan_to_income`, `credit_utilization`) add meaningful signal
-
-Rename the notebook `EDA_lending.ipynb` when complete.
 
 **You've successfully explored the loan dataset!**
 
@@ -152,7 +148,7 @@ Click **Stop** to stop the workspace instance.
 
 ## Lab 2.5 — Complete Project Tasks
 
-Navigate to **Artifacts** in your project. Click on `results` folder and select **Link to Task** on the notebook outputs. Choose the *Explore Loan Data* task.
+Navigate to **Artifacts** in your project. Click on the `results` folder and select **Link to Task** on the notebook outputs. Choose the *Explore Loan Data* task.
 
 Navigate back to **Tasks**, open *Explore Loan Data*, and mark it as complete.
 
@@ -178,7 +174,7 @@ In the **File Name or Command** field enter:
 scripts/multitrain.py
 ```
 
-Click **Start**. Watch as three job runs appear. Click into the `train_xgboost.py` job run and inspect the **Results** tab once complete — you'll see confusion matrices and feature importance charts logged automatically.
+Click **Start**. Watch as three models run as part of the multitrain job.
 
 **You've trained three credit risk models!**
 
@@ -326,103 +322,9 @@ Mark the *Deploy Scoring API* task as complete. You've completed 3 tasks in Domi
 
 ---
 
-# Section 4 — Model Monitoring
+# Section 4 — Domino Flows
 
-## Lab 4.1 — Set Up a Domino Data Source for Model Monitor
-
-### Part 1: Connect a Data Source
-
-Before registering a model with Domino Model Monitor, you need to connect the storage location where your training data lives. 
-
-For this activity, we're going to demonstrate how you can do this with a Domino Data Source.
-
-This tells the monitor where to read baseline data from.
-
-1. From the main homepage, go to **Deploy** > **Model Monitor**
-2. Click **Monitoring Data Sources** in the left hand pane. Click on **Add Data Source**
-3. Fill in the details for your storage type. For Amazon S3:
-   - **Data Source Name**: a unique name you will reference later (e.g. `lending-club-data`)
-   - **S3 Bucket Name**: the name of the S3 bucket (e.g. `lending-club-mm`)
-   - **S3 Region**: the AWS region of your bucket (e.g. `us-west-1`)
-   - **Authentication**: enter your **Access Key** and **Secret Key**
-4. Click **Save** to create the data source
-
-> **Note:** The data source must have **read and list** access to the bucket. Upload `lending_clean.csv` to your S3 bucket — this is the training data used as the baseline for drift detection.
-
----
-
-### Part 2: Register the Model Using monitoring_config.json
-
-With the data source configured, you can now register the sklearn Random Forest model with Model Monitor using the `monitoring_config.json` file already prepared in this project.
-
-1. In the Model Monitor navigation, go to **Models**
-2. On the **Models** page, click **Register Model** > **Upload Model Config File**
-3. In the **Register Model** window, upload the file `monitoring_config.json` from the project root
-
-   This file defines:
-   - All 51 input features with their value types (`numerical` or `categorical`) and feature importances
-   - The prediction column `is_default` (categorical)
-   - The prediction probability column `default_probability` (numerical)
-   - The dataset details pointing to `lending_clean.csv` on the `lending-club-data` data source
-   - Model metadata: name `lending-club-sklearn-rf`, type `classification`
-
-4. Click **Register** to complete model registration
-
-Once registered, Domino Model Monitor will compute baseline statistics from `lending_clean.csv` and be ready to detect drift when prediction data is ingested.
-
-## Lab 4.2 — Generate a Baseline and Define Drift Metrics
-
-Run the baseline script as a Domino Job:
-
-```
-scripts/monitoring_baseline.py --mode baseline
-```
-
-Once complete, inspect the **Results** tab — you'll see the baseline feature distribution plots. These represent the "normal" state of incoming loan applications.
-
-Back in Model Monitor, configure drift alerts for the following features using PSI thresholds:
-
-| Feature | Priority | Alert at PSI | Retrain at PSI |
-|---|---|---|---|
-| `dti` | High | 0.10 | 0.20 |
-| `int_rate` | High | 0.10 | 0.20 |
-| `annual_inc` | High | 0.10 | 0.20 |
-| `loan_to_income` | High | 0.10 | 0.20 |
-| `revol_util` | Medium | 0.10 | 0.20 |
-
-**You've configured drift monitoring!**
-
----
-
-## Lab 4.3 — Simulate Drift
-
-Run the drift simulation job to see alerts in action:
-
-```
-scripts/monitoring_baseline.py --mode simulate --shift-severity medium
-```
-
-Inspect the **Results** tab — you'll see a PSI bar chart colour-coded green/amber/red. Features above 0.2 PSI are flagged for retraining.
-
-Navigate back to **Model Monitor** and observe the drift alerts that have been triggered. Discuss with your instructor: what real-world events might cause this kind of shift in loan application data?
-
-**You've observed model drift in action!**
-
----
-
-## Lab 4.4 — Trigger Retraining
-
-From the Model Monitor alert view, click **Trigger Retraining** and select `scripts/multitrain.py` as the retraining job.
-
-Once the job completes, navigate to **Experiments** and compare the new run against the previous baseline. Has the model performance changed?
-
-**You've triggered a model retraining from a drift alert!**
-
----
-
-# Section 5 — Domino Flows
-
-## Lab 5.1 — Introduction to Domino Flows
+## Lab 4.1 — Introduction to Domino Flows
 
 ***Documentation: [Domino Flows](https://docs.dominodatalab.com/en/latest/user_guide/flows/)***
 
@@ -442,7 +344,7 @@ Note that the three training steps run **in parallel** after preprocessing — D
 
 ---
 
-## Lab 5.2 — Build the Retraining Flow
+## Lab 4.2 — Build the Retraining Flow
 
 Click **New Flow** and select **Import YAML**. Upload `flows/retraining_flow.yaml`.
 
@@ -458,7 +360,7 @@ Update the `project` field in the YAML to match your project name before importi
 
 ---
 
-## Lab 5.3 — Run and Monitor the Flow
+## Lab 4.3 — Run and Monitor the Flow
 
 Click **Run Flow**. Observe the DAG view as each step executes — you'll see the parallel training steps run simultaneously and the conditional branch fire once evaluate completes.
 
@@ -468,7 +370,7 @@ Click into individual steps to inspect their logs and outputs in real time.
 
 ---
 
-## Lab 5.4 — Schedule the Flow
+## Lab 4.4 — Schedule the Flow
 
 In the Flow editor, click **Schedule**. Set a monthly schedule (1st of each month at 06:00 UTC).
 

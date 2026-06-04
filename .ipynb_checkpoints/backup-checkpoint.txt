@@ -1,0 +1,17 @@
+Done. I converted the flow from YAML to a proper Domino Flows Python definition and validated it.
+
+I created `flows/retraining_flow.py`, written the way Domino Flows are actually meant to be authored — using flytekit (`@workflow`) plus the Domino plugin's `run_domino_job_task` helper with `Input`/`Output` and `FlyteFile` typing. I based it on Domino's "Get started with Flows" docs and confirmed the exact API against the installed `flytekitplugins.domino.helpers` package in your workspace (so the signatures match your Domino version, not a guess).
+
+It preserves the same DAG as the old YAML: ingest → preprocess → three training jobs (sklearn, XGBoost, H2O) that run in parallel → evaluate → a final promote/alert decision step. In flytekit the parallelism and dependencies come automatically from how each task's output is fed into the next, so I wired the outputs through instead of using YAML's `depends_on`. H2O keeps its "Large" hardware tier; the rest are "Small."
+
+One design note worth flagging: flytekit workflow graphs are static, so you can't do a literal `if AUC > 0.80` branch on a task's runtime output at definition time the way the YAML's `condition:` implied. I kept the graph honest by routing the evaluation result into a final `promote.py` step, with the threshold logic living in that script (promote vs. alert & hold). That matches how the scripts are already structured, and I confirmed all eight referenced scripts exist (`ingest, preprocess, train_sklearn, train_xgboost, train_h2o, evaluate, promote, alert`).
+
+Validation: `py_compile` passed, and more importantly flytekit successfully loaded the workflow (`workflow name = retraining_flow.retraining_flow`, inputs `['s3_bucket', 's3_region']`) — so it's a valid, registerable flow. You'd run it with:
+
+`pyflyte run --remote flows/retraining_flow.py retraining_flow`
+
+A couple of things I did not do, so you can decide:
+- I left the original `flows/retraining_flow.yaml` in place. Want me to delete it, or keep it for reference?
+- The new file is an uncommitted change in the workspace (it's not synced/committed yet). The README's Lab 4.2 still says "Import YAML" — that instruction would now need updating to the `pyflyte run` approach if you want the lab to match. Let me know if you'd like me to update the README too (carefully, via the terminal this time).
+
+Also note the `s3_bucket`/`environment_name` defaults (`lending-club-mm`, `LendingClubProject`) are placeholders carried over from the YAML — adjust if your real bucket/environment names differ. Want me to remove the YAML and/or update the README?

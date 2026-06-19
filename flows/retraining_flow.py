@@ -3,12 +3,11 @@ retraining_flow.py
 ==================
 LendingClub credit-risk model retraining pipeline, defined as a Domino Flow.
 
-This is the Python (flytekit) definition of the pipeline that was previously
-described in retraining_flow.yaml. Domino Flows are authored in Python using
+This is the Python (flytekit) definition of a Flows. Domino Flows are authored in Python using
 flytekit and the Domino flytekit plugin, not YAML -- see:
 https://docs.dominodatalab.com/en/latest/user_guide/5b5259/get-started-with-flows/
 
-DAG (same as the original YAML):
+DAG:
 
     [ingest] -> [preprocess] -> +-> [train_sklearn] -+
                                 +-> [train_xgboost] -+-> [evaluate] -> [decision]
@@ -35,14 +34,14 @@ from flytekit.types.file import FlyteFile
 from flytekitplugins.domino.helpers import Input, Output, run_domino_job_task
 
 # Domino compute environment used for every step (override per task if needed).
-ENVIRONMENT_NAME = "LendingClubProject"
+ENVIRONMENT_NAME = "LendingClubProject-TrainingEnvironment"
 
 CSV = TypeVar("csv")
 
 
 @workflow
 def retraining_flow(
-    s3_bucket: str = "lending-club-mm",
+    s3_bucket: str = "lending-club",
     s3_region: str = "us-west-2",
 ) -> FlyteFile[CSV]:
     """End-to-end retraining pipeline for the LendingClub credit-risk model."""

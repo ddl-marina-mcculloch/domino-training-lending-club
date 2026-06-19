@@ -30,25 +30,26 @@ JSON = TypeVar("json")
 @workflow
 def model_evaluation_flow(
     auc_threshold: float = 0.80,
-) -> FlyteFile[JSON]:
+):
     """
     Simple 1-step workflow: evaluate models from MLflow and select the best.
 
     This assumes sklearn, xgboost, and h2o models have already been trained
     in previous labs and logged to MLflow.
+
+    The evaluation result is written to results/evaluation_result.json
+    in the job execution and can be viewed in the job artifacts.
     """
 
     # ----------------------------------------------------------------------
     # Evaluate models from MLflow and select the best
     # ----------------------------------------------------------------------
-    evaluate = run_domino_job_task(
+    run_domino_job_task(
         flyte_task_name="Evaluate & Select Best Model",
         command="python scripts/evaluate.py --auc-threshold 0.80",
         inputs=[],
-        output_specs=[Output(name="evaluation_result", type=FlyteFile[JSON])],
+        output_specs=[],
         environment_name=ENVIRONMENT_NAME,
         hardware_tier_name="Small",
         use_project_defaults_for_omitted=True,
     )
-
-    return evaluate["evaluation_result"]

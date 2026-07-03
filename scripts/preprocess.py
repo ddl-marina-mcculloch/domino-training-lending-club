@@ -4,7 +4,7 @@ preprocess.py
 Feature engineering and cleaning pipeline for the LendingClub loan dataset.
 
 Steps:
-    1. Load raw CSV from Domino Dataset or S3 data source
+    1. Load raw CSV from Domino Dataset
     2. Drop high-nullity columns (>40% missing)
     3. Filter to fully resolved loan statuses only
     4. Create binary target: is_default

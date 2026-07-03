@@ -2,7 +2,7 @@
 ingest.py
 ---------
 Step 1 of the Domino Flows retraining pipeline.
-Pulls the latest LendingClub loan data from the S3 data source
+Pulls the latest LendingClub loan data from the Domino Dataset
 and writes it to the Domino Dataset as lending_raw.csv.
 
 Usage:

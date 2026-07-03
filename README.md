@@ -357,6 +357,7 @@ pyflyte run --remote flows/retraining_flow.py model_evaluation_flow
 ```
 
 Navigate back to **Flows** and under the **Workflows** tab, click on your Flow - then click on the **Run** which should have a randomly generated name
+
 You'll be able to see the **Flow Task** `Evaluate & Select Best Model (n0)` and review the details and log output
 
 **You've launched a new flow in Domino!**
@@ -372,9 +373,6 @@ Next, click on the **Launch Inputs** tab, here you'll see what parameters were u
 **You've explored just some of Domino Flows capabilities!**
 
 ---
-
-// cleanup
-Click **Stop** to stop the workspace instance.
 
 # Section 6 — GenAI & Agentic Systems
 
@@ -459,7 +457,8 @@ This wires together the full stack: ML model → SHAP explainability → LLM exp
 ---
 
 ### *** Cleanup ***
-
+// cleanup
+Click **Stop** to stop the workspace instance.
 ---
 
 ## Repository Structure
@@ -467,35 +466,34 @@ This wires together the full stack: ML model → SHAP explainability → LLM exp
 ```
 domino-training-lending/
 ├── data/                              # Sample dataset (50k rows)
+│   └── lending_raw.csv  
 ├── notebooks/
 │   └── EDA_lending.ipynb              # Exploratory data analysis
 ├── scripts/
-│   ├── ingest.py                      # Step 1: Pull data from S3
-│   ├── preprocess.py                  # Step 2: Feature engineering & cleaning
+│   ├── app.py                         # Dash loan officer dashboard
+│   ├── app.sh                         # App launch script
+│   ├── preprocess.py                  # Feature engineering & cleaning
 │   ├── multitrain.py                  # Orchestrates all model training
 │   ├── train_sklearn.py               # Random Forest classifier
 │   ├── train_xgboost.py               # XGBoost classifier
 │   ├── train_h2o.py                   # H2O AutoML
 │   ├── predict.py                     # Scoring function for endpoint
 │   ├── evaluate.py                    # Model selection & AUC gate
-│   ├── promote.py                     # Endpoint promotion via Domino API
-│   ├── alert.py                       # Alert & hold on gate failure
-│   └── monitoring_baseline.py         # Baseline stats & drift simulation
+│   ├── ingest_s3.py                   # REVIEW
+│   ├── loan_explainer_agent.py        # Agentic LLM decision explainer
+│   ├── validate_s3_data.py            # REVIEW
+│   ├── sample_data.py                 # Pre-cleaning script, not needed for workshop
 ├── models/                            # Serialised model artifacts
-├── monitoring/
-│   ├── baseline_stats.json            # Generated baseline statistics
-│   └── drift_config.yaml              # Model Monitor configuration
+│   ├── h2o_best_model.pkl             # h2o
+│   └── sk_learn_rf_model.pkl          # sk learn
+│   └── xgboost_model.pkl              # xgboost
 ├── flows/
 │   └── retraining_flow.yaml           # Domino Flows pipeline definition
-├── genai/
-│   ├── loan_explainer_agent.py        # Agentic LLM decision explainer
-│   └── policy_docs/                   # Lending policy documents for RAG
-├── app/
-│   ├── app.py                         # Dash loan officer dashboard
-│   └── app.sh                         # App launch script
 ├── results/                           # Job outputs and charts
-├── README.md
-└── README_project.md
+├── README.md 
+└── TRAINING_DELIVERY_GUIDE.md
+└── policy_docs.txt                    # Lending policy documents for RAG
+
 ```
 
 ---

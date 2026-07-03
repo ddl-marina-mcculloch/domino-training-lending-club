@@ -1,7 +1,7 @@
 """
 evaluate.py
 -----------
-Step 6 of the Domino Flows retraining pipeline.
+Domino Flows retraining pipeline.
 Queries MLflow for the latest runs from all three training frameworks,
 selects the best model by AUC, and writes evaluation_result.json.
 

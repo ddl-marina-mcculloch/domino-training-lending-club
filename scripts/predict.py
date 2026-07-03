@@ -2,7 +2,7 @@
 predict.py
 
 Scoring function for the LendingClub loan default prediction endpoint.
-Loaded by the Domino Model API - exposes a single `predict()` function.
+Loaded by the Domino Endpoint - exposes a single `predict()` function.
 
 Returns:
     - default_probability : float  (0-1)
@@ -304,7 +304,7 @@ def _get_shap_explanation(explainer, feature_vector: pd.DataFrame,
 
 
 # ---------------------------------------------------------------------------
-# Main predict function - called by Domino Model API
+# Main predict function - called by Domino Endpoint
 # ---------------------------------------------------------------------------
 def predict(**data) -> dict:
     """

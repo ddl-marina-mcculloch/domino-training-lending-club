@@ -5,9 +5,6 @@ Step 6 of the Domino Flows retraining pipeline.
 Queries MLflow for the latest runs from all three training frameworks,
 selects the best model by AUC, and writes evaluation_result.json.
 
-The Flows conditional branching in retraining_flow.yaml reads
-outputs.evaluate.auc to decide whether to promote or hold.
-
 Usage:
     python scripts/evaluate.py
     python scripts/evaluate.py --auc-threshold 0.80

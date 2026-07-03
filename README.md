@@ -9,10 +9,9 @@ Domino Training v6.2.0
 * Explore and prepare the data in JupyterLab
 * Train multiple models across different frameworks and compare performance in MLflow
 * Deploy a real-time credit scoring API endpoint
-* Build and share a loan officer dashboard with SHAP explainability
-* Set up an S3 Data Source in Model Monitoring
-* Monitor your model for drift and trigger retraining
+* Build and share a loan officer dashboard with optional SHAP explainability
 * Orchestrate the full pipeline with Domino Flows
+* Set up an S3 Data Source in Model Monitoring [review]
 * Build an agentic GenAI system that explains credit decisions using an LLM
 
 ---
@@ -330,23 +329,23 @@ Mark the *Deploy Scoring API* task as complete. You've completed 3 tasks in Domi
 
 Navigate to **Flows** in the left pane. Flows lets you define DAG-based pipelines that orchestrate multiple jobs with dependencies, conditional branching, and scheduling.
 
-Review the pipeline DAG for this workshop:
+Review the pipeline for this workshop:
 
 ```
-[Ingest from S3] → [Preprocess] → [Train sklearn ]
-                                → [Train XGBoost ] → [Evaluate AUC]
-                                → [Train H2O     ]       ↓
-                                              AUC > 0.80 → [Promote Endpoint]
-                                              AUC ≤ 0.80 → [Alert & Hold]
+[Query MLflow] → [Train sklearn ]
+               → [Train XGBoost ] → [Evaluate AUC]
+               → [Train H2O     ]       ↓
+                                        AUC > 0.80 → [Promote Endpoint]
+                                        AUC ≤ 0.80 → [Hold]
 ```
 
-Note that the three training steps run **in parallel** after preprocessing — Domino handles this automatically based on the `depends_on` configuration.
+Note that the goal of this training lab is to evaluate all 3 models and decide which is the best **AUC** performer.
 
 ---
 
 ## Lab 4.2 — Build the Retraining Flow
 
-Click **New Flow** and select **Import YAML**. Upload `flows/retraining_flow.yaml`.
+In a Domino Workspace open the Terminal and run the following **New Flow** and select **Import YAML**. Upload `flows/retraining_flow.yaml`.
 
 Review each step in the Flow editor:
 - **ingest** → **preprocess**: sequential dependency

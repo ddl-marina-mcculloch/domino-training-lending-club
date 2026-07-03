@@ -290,7 +290,7 @@ Before publishing the app, set the endpoint environment variables so the app can
 1. Navigate to your endpoint's **Overview** tab and copy the **Endpoint URL** and **API Key**
 2. In your project, go to **Settings > Environment Variables** and add:
    - `DOMINO_MODEL_API_URL` — your endpoint URL
-   - `DOMINO_MODEL_API_KEY` — your API key in Account Settings
+   - `DOMINO_MODEL_PAT` — your API key in Account Settings
 
 Navigate to **Deployments > App**. Enter the title *YourName Loan Officer Dashboard* and click **Publish**.
 
@@ -404,7 +404,7 @@ Launch a workspace and open a terminal. Set your API key:
 ```bash
 export ANTHROPIC_API_KEY=your-key-here
 export DOMINO_MODEL_API_URL=your-endpoint-url
-export DOMINO_MODEL_API_KEY=your-endpoint-key
+export DOMINO_MODEL_PAT=your-endpoint-key
 ```
 
 Run the explainer with the default sample application:

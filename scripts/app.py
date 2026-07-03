@@ -11,7 +11,7 @@ Provides a form-based UI for loan officers to:
 
 Environment variables required:
     DOMINO_MODEL_API_URL    : Full URL of the deployed Domino endpoint
-    DOMINO_MODEL_API_KEY    : API key for the endpoint
+    DOMINO_MODEL_PAT    : API key for the endpoint
 
 Usage:
     python app/app.py
@@ -40,7 +40,7 @@ log = logging.getLogger(__name__)
 # Domino endpoint config
 # ---------------------------------------------------------------------------
 MODEL_API_URL = os.environ.get("DOMINO_MODEL_API_URL", "")
-MODEL_API_KEY = os.environ.get("DOMINO_MODEL_API_KEY", "")
+MODEL_API_KEY = os.environ.get("DOMINO_MODEL_PAT", "")
 
 # ---------------------------------------------------------------------------
 # App init

@@ -16,7 +16,7 @@ Can be run standalone or imported and called from the Dash app (Lab 6.4).
 
 Environment variables:
     DOMINO_MODEL_API_URL  : Deployed scoring endpoint URL
-    DOMINO_MODEL_API_KEY  : Endpoint API key
+    DOMINO_MODEL_PAT  : Endpoint API key
     ANTHROPIC_API_KEY     : API key for the LLM (Claude)
 
 Usage:
@@ -44,7 +44,7 @@ log = logging.getLogger(__name__)
 # Config
 # ---------------------------------------------------------------------------
 MODEL_API_URL  = os.environ.get("DOMINO_MODEL_API_URL", "")
-MODEL_API_KEY  = os.environ.get("DOMINO_MODEL_API_KEY", "")
+MODEL_API_KEY  = os.environ.get("DOMINO_MODEL_PAT", "")
 ANTHROPIC_KEY  = os.environ.get("ANTHROPIC_API_KEY", "")
 POLICY_DIR     = Path(__file__).parent / "policy_docs"
 LLM_MODEL      = "claude-sonnet-4-20250514"

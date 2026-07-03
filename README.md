@@ -289,12 +289,13 @@ Try modifying the values and observe how the probability and recommendation chan
 
 Before publishing the app, set the endpoint environment variables so the app can call your scoring API:
 
-1. Navigate to your endpoint's **Overview** tab and copy the **Endpoint URL** and **API Key**
-2. In your project, go to **Settings > Environment Variables** and add:
+1. Navigate to your endpoint's **Overview** tab and copy the **Endpoint URL**
+2. Under Account > Account settings navigate to Personal Access Tokens and click **Generate new token**
+3. In your project, go to **Settings > Environment variables** and add:
    - `DOMINO_MODEL_API_URL` — your endpoint URL
-   - `DOMINO_MODEL_API_KEY` — your API key in Account Settings
+   - `DOMINO_MODEL_PAT` — your PAT generated in Account Settings
 
-Navigate to **Deployments > App**. Enter the title *YourName Loan Officer Dashboard* and click **Publish**.
+Navigate to **Deployments > Apps & Agents**. Enter the title *YourName Loan Officer Dashboard* and click **Publish**.
 
 Once active (1–3 minutes), click **View App**. You'll see:
 
@@ -306,7 +307,7 @@ Once active (1–3 minutes), click **View App**. You'll see:
 
 Enter some test applications and observe how the SHAP chart changes as you adjust features like `dti`, `grade`, and `annual_inc`.
 
-**You've deployed a loan officer dashboard!**
+**You've deployed a loan officer dashboard App!**
 
 ---
 
@@ -399,7 +400,7 @@ Launch a workspace and open a terminal. Set your API key:
 ```bash
 export ANTHROPIC_API_KEY=your-key-here
 export DOMINO_MODEL_API_URL=your-endpoint-url
-export DOMINO_MODEL_API_KEY=your-endpoint-key
+export DOMINO_MODEL_PAT=your-endpoint-key
 ```
 
 Run the explainer with the default sample application:

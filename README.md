@@ -345,27 +345,27 @@ Note that the goal of this training lab is to evaluate all 3 models and decide w
 
 ## Lab 4.2 — Build the Retraining Flow
 
-In a Domino Workspace open the Terminal and run the following **New Flow** and select **Import YAML**. Upload `flows/retraining_flow.yaml`.
+To launch and run a flow, we'll go back to our Domino Workspace. Navigate to **Workspaces** in the left pane.
+In a **Domino Workspace** open the Terminal and run the following code to launch Flows
 
-Review each step in the Flow editor:
-- **ingest** → **preprocess**: sequential dependency
-- **train_sklearn**, **train_xgboost**, **train_h2o**: all depend on preprocess, run in parallel
-- **evaluate**: depends on all three training steps
-- **promote** / **alert_hold**: conditional branches based on `outputs.evaluate.auc`
+```bash
+pyflyte run --remote flows/retraining_flow.py model_evaluation_flow
+```
 
-Update the `project` field in the YAML to match your project name before importing.
+Navigate back to **Flows** and under the **Workflows** tab, click on your Flow - then click on the **Run** which should have a randomly generated name
+You'll be able to see the **Flow Task** `Evaluate & Select Best Model (n0)` and review the details and log output
 
-**You've defined a retraining pipeline as code!**
+**You've launched a new flow in Domino!**
 
 ---
 
 ## Lab 4.3 — Run and Monitor the Flow
 
-Click **Run Flow**. Observe the DAG view as each step executes — you'll see the parallel training steps run simultaneously and the conditional branch fire once evaluate completes.
+Click the **Graph** tab. You'll see a visual representation of your Flows run — and an option to re-run your Flow from this view
 
-Click into individual steps to inspect their logs and outputs in real time.
+Next, click on the **Launch Inputs** tab, here you'll see what parameters were used as inputs for your Flows run.
 
-**You've run a full ML retraining pipeline!**
+**You've explored just some of Domino Flows capabilities!**
 
 ---
 

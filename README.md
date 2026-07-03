@@ -1,9 +1,9 @@
 # domino-training-lending-club
-Domino Training v6.2.0
+Domino Training for v6.2.0 key features
 
 # Domino User Training Workshop: Predicting Loan Default Risk
 
-#### In this workshop you will work through an end-to-end ML workflow using LendingClub loan data to build a credit risk scoring system. The labs are broken into six sections:
+#### In this workshop you will work through an end-to-end AI/ML workflow using LendingClub loan data to build a credit risk scoring system. The labs are broken into six sections:
 
 * Upload raw training data to a Domino Dataset
 * Explore and prepare the data in JupyterLab
@@ -11,8 +11,13 @@ Domino Training v6.2.0
 * Deploy a real-time credit scoring API endpoint
 * Build and share a loan officer dashboard with optional SHAP explainability
 * Orchestrate the full pipeline with Domino Flows
-* Set up an S3 Data Source in Model Monitoring [review]
 * Build an agentic GenAI system that explains credit decisions using an LLM
+
+**Optional section**:
+* Use Domino Flows to orchestrate data ingestion from S3 using Domino Data Sources.
+
+**Cleanup**
+* Ensure you visit the cleanup section once you've worked through all the labs
 
 ---
 
@@ -24,11 +29,11 @@ Domino Training v6.2.0
 
 Once you have access to the Domino training environment, navigate to the top Search menu and begin typing *LendingClubProject*. Select the project from the dropdown.
 
-Read the readme to understand the use case and project structure.
+Scan through the readme to understand the use case and project structure.
 
 In the top right corner, click the **Fork** icon. Name your project *LendingClub-Training-YourName*.
 
-**You've created your first project!**
+**You've created your first Domino Project!**
 
 ---
 
@@ -86,7 +91,7 @@ Assign yourself as owner on each. Click **Save**.
 
 Navigate to **Data > Datasets** in the left pane. Click on your project dataset. 
 
-Upload **lending_raw.csv**. You'll find this in the **data** directory.You will see a new CSV file appear in your Dataset overview.
+Upload **lending_raw.csv**. You'll find this in the **data** directory. You will see a new CSV file appear in your Dataset overview.
 
 **You've added training data to your Domino project!**
 
@@ -124,7 +129,7 @@ Work through the notebook cell by cell. The notebook will:
 
 Key insights to note as you run through the notebook:
 
-- The default rate is approximately 20–25% across resolved loans — a moderately imbalanced classification problem
+- The loan default rate is approximately 20–25% across resolved loans, so a moderately imbalanced classification problem
 - **Interest rate** and **grade** are the strongest predictors — Grade E/F/G loans default significantly more
 - **DTI** shows clear separation between defaulted and fully paid loans
 - Engineered features (`loan_to_income`, `credit_utilization`) add meaningful signal
@@ -138,8 +143,6 @@ Key insights to note as you run through the notebook:
 ***Documentation: [Sync changes in a Workspace](https://docs.dominodatalab.com/en/latest/user_guide/262fef/sync-changes-in-a-workspace/)***
 
 Click the **File Changes** tab in the top left corner of your workspace. Enter a commit message such as *"EDA notebook complete"* and click **Sync All Changes**.
-
-Click **Stop** to stop the workspace instance.
 
 **You've synced your changes!**
 
@@ -159,13 +162,13 @@ Navigate back to **Tasks**, open *Explore Loan Data*, and mark it as complete.
 
 ***Documentation: [Run a Job](https://docs.dominodatalab.com/en/latest/user_guide/af97b7/create-and-run-jobs/)***
 
-Navigate to **Jobs** in your project and click **Run**.
-
 Inspect `scripts/multitrain.py` in the Code browser first — it orchestrates three parallel training jobs:
 
 - `scripts/train_sklearn.py` — Random Forest classifier with balanced class weights
 - `scripts/train_xgboost.py` — XGBoost with `scale_pos_weight` for class imbalance
 - `scripts/train_h2o.py` — H2O AutoML with up to 15 models
+
+Navigate to **Jobs** in your project and click **Run**.
 
 In the **File Name or Command** field enter:
 
@@ -235,7 +238,7 @@ Sample scoring request:
 - **File**: `scripts/predict.py`
 - **Function**: `predict`
 - **Environment**: LendingClubProject
-- Check **Log HTTP requests and responses to model instance logs**
+- Check **Log HTTP requests and responses to endpoint instance log**
 
 Click **Create Endpoint**. The status will progress: Preparing → Building → Starting → Running (2–5 minutes).
 
@@ -369,15 +372,8 @@ Next, click on the **Launch Inputs** tab, here you'll see what parameters were u
 
 ---
 
-## Lab 4.4 — Schedule the Flow
-
-In the Flow editor, click **Schedule**. Set a monthly schedule (1st of each month at 06:00 UTC).
-
-This represents production-ready continuous retraining — the pipeline will automatically ingest fresh data, retrain, evaluate, and only promote if quality thresholds are met.
-
-**You've scheduled a recurring retraining pipeline!**
-
----
+// cleanup
+Click **Stop** to stop the workspace instance.
 
 # Section 6 — GenAI & Agentic Systems
 
@@ -456,6 +452,12 @@ This wires together the full stack: ML model → SHAP explainability → LLM exp
 ---
 
 ### *** End of Labs ***
+
+---
+
+---
+
+### *** Cleanup ***
 
 ---
 

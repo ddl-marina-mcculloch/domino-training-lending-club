@@ -1,0 +1,17 @@
+INTEREST RATE AND LOAN GRADE POLICY (Section 4.1)
+
+Interest rates are assigned based on the applicant's credit grade (A–G)
+and loan term. Higher rates reflect higher perceived credit risk.
+
+Rate bands by grade:
+  - Grade A : 5.0% – 8.0%
+  - Grade B : 8.0% – 11.0%
+  - Grade C : 11.0% – 14.0%
+  - Grade D : 14.0% – 18.0%
+  - Grade E : 18.0% – 22.0%
+  - Grade F : 22.0% – 26.0%
+  - Grade G : 26.0%+
+
+Applications with interest rates above 20% require enhanced income
+verification. Rates above 25% require documentation of the applicant's
+awareness of total repayment costs.

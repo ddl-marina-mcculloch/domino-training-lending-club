@@ -1,0 +1,10 @@
+LOAN-TO-INCOME RATIO POLICY (Section 3.4)
+
+The loan-to-income (LTI) ratio measures the requested loan amount
+relative to the applicant's annual gross income.
+
+Thresholds:
+  - LTI <= 0.20 : Low risk. Standard processing.
+  - LTI 0.20–0.35: Moderate. Standard underwriting applies.
+  - LTI 0.35–0.50: Elevated. Verify income documentation.
+  - LTI > 0.50  : High. Senior review required. Decline if DTI also elevated.

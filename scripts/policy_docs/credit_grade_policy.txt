@@ -1,0 +1,13 @@
+CREDIT GRADE POLICY (Section 4.2)
+
+Credit grades (A–G) are assigned based on the applicant's FICO score,
+credit history length, and payment behaviour.
+
+Grade descriptions:
+  - Grade A : Excellent credit. FICO 750+. No delinquencies.
+  - Grade B : Good credit. FICO 700–749. Minor issues acceptable.
+  - Grade C : Fair credit. FICO 650–699. Some delinquencies permitted.
+  - Grade D : Below average. FICO 600–649. Enhanced review required.
+  - Grade E : Poor credit. FICO 550–599. Approval requires strong income.
+  - Grade F : Very poor. FICO 500–549. Decline in most circumstances.
+  - Grade G : Exceptional risk. FICO < 500. Decline.

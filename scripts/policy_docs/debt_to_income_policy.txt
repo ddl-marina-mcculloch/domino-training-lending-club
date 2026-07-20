@@ -1,0 +1,18 @@
+DEBT-TO-INCOME RATIO POLICY (Section 3.2)
+
+The debt-to-income (DTI) ratio is a primary underwriting criterion. It
+measures the applicant's total monthly debt obligations as a percentage
+of gross monthly income.
+
+Thresholds:
+  - DTI <= 20%  : Low risk. Eligible for all loan products.
+  - DTI 20–35%  : Moderate risk. Standard underwriting applies.
+  - DTI 35–43%  : Elevated risk. Senior underwriter review required.
+  - DTI > 43%   : High risk. Application must be declined unless
+                  exceptional compensating factors are documented.
+
+Compensating factors that may offset a high DTI:
+  - Significant liquid assets (>12 months of payments in reserve)
+  - Excellent credit history (no delinquencies in 5 years)
+  - Low loan-to-value ratio on secured loans
+  - Strong income growth trajectory with documentation

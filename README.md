@@ -382,7 +382,7 @@ Next, click on the **Launch Inputs** tab, here you'll see what parameters were u
 
 Domino 6.2 introduces native support for LLM integration, RAG pipelines, and agentic patterns. In this section you'll build a system that explains the credit model's decisions to loan officers in plain English — combining the ML model, SHAP values, and an LLM with access to company lending policy documents.
 
-Review `genai/loan_explainer_agent.py`. The agent has two tools:
+Review `scripts/loan_explainer_agent.py`. The agent has two tools:
 
 | Tool | Description |
 |---|---|
@@ -404,7 +404,7 @@ export DOMINO_MODEL_PAT=your-endpoint-key
 Run the explainer with the default sample application:
 
 ```bash
-python genai/loan_explainer_agent.py
+python scripts/loan_explainer_agent.py
 ```
 
 Observe the agent's step-by-step reasoning in the logs:
@@ -415,7 +415,7 @@ Observe the agent's step-by-step reasoning in the logs:
 Try the interactive mode to test with custom inputs:
 
 ```bash
-python genai/loan_explainer_agent.py --interactive
+python scripts/loan_explainer_agent.py --interactive
 ```
 
 **You've built and run an agentic credit decision explainer!**

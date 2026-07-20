@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p /mnt/code/scripts/policy_docs && ls /mnt/code/scripts/)"
+    ],
+    "additionalDirectories": [
+      "/mnt/code/scripts"
+    ]
+  }
+}

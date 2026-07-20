@@ -1,0 +1,12 @@
+INCOME VERIFICATION POLICY (Section 2.1)
+
+All loan applications must include income verification at one of three levels:
+  - Not Verified   : Stated income only. Applies to loans < $10,000
+                     with Grade A–B applicants.
+  - Source Verified: Income source confirmed (employer, bank). Required
+                     for loans $10,000–$25,000 or Grade C–D.
+  - Verified       : Full income documentation (tax returns, pay stubs).
+                     Required for loans > $25,000 or Grade E–G.
+
+Applications with income verification below the required level for their
+loan amount and grade must be escalated before proceeding.

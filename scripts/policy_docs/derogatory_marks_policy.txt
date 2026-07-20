@@ -1,0 +1,13 @@
+DEROGATORY MARKS POLICY (Section 6.1)
+
+Derogatory marks include public records (bankruptcies, judgements, liens)
+and recent delinquencies (missed payments within the past 24 months).
+
+Policy:
+  - 0 derogatory marks      : No impact on processing.
+  - 1 derogatory mark       : Document the circumstances. Review required
+                              if mark is within 12 months.
+  - 2+ derogatory marks     : Senior underwriter review required.
+  - Bankruptcy within 2 yrs : Automatic decline.
+  - Bankruptcy 2–7 yrs ago  : Eligible with strong compensating factors
+                              and documented recovery.

@@ -1,0 +1,14 @@
+CREDIT UTILISATION POLICY (Section 5.3)
+
+Revolving credit utilisation reflects how much of an applicant's
+available credit is currently in use.
+
+Guidelines:
+  - Utilisation <= 30%  : Acceptable. No additional review required.
+  - Utilisation 30–60%  : Moderate concern. Consider alongside DTI.
+  - Utilisation 60–80%  : High concern. Request explanation from applicant.
+  - Utilisation > 80%   : Very high. Strong negative signal. Decline
+                          unless strong compensating factors present.
+
+Note: Sudden increases in utilisation (>20pp in 3 months) may indicate
+financial distress and warrant additional investigation.

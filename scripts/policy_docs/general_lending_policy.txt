@@ -1,0 +1,16 @@
+GENERAL LENDING POLICY (Section 1.1)
+
+All lending decisions must be made in accordance with applicable fair
+lending laws, including the Equal Credit Opportunity Act (ECOA) and
+the Fair Housing Act. Decisions must be based solely on creditworthiness
+criteria and not on protected characteristics.
+
+The machine learning model score is one input into the underwriting
+decision. Loan officers retain discretion to:
+  - Approve a borderline application with documented compensating factors
+  - Decline an application that scores as low-risk if fraud is suspected
+  - Escalate any application to a senior underwriter
+
+All overrides must be documented in the loan management system with a
+clear rationale. Systematic overrides in one direction may trigger a
+fair lending review.

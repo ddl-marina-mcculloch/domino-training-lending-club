@@ -1,15 +1,18 @@
 """
 predict.py
 
-Scoring function for the LendingClub loan default prediction endpoint.
+Scoring function for the LendingClub loan default prediction endpoint,
+backed by the H2O AutoML model (models/h2o_best_model.pkl) from train_h2o.py.
 Loaded by the Domino Endpoint - exposes a single `predict()` function.
+
+Requires: h2o (pip) and a Java runtime in the endpoint environment.
 
 Returns:
     - default_probability : float  (0-1)
     - risk_tier           : str    (Low / Medium / High)
     - risk_score          : int    (0-100, inverted probability for readability)
     - recommendation      : str    (Approve / Review / Decline)
-    - shap_values         : dict   (top 5 feature contributions for explainability)
+    - contributions       : dict   (top 5 feature contributions, log-odds, for explainability)
 
 Sample request:
     {
@@ -22,7 +25,6 @@ Sample request:
             "home_ownership": "RENT",
             "purpose": "debt_consolidation",
             "term": "36",
-            "emp_length": 5.0,
             "fico_range_low": 680,
             "fico_range_high": 684,
             "inq_last_6mths": 1,
@@ -37,15 +39,9 @@ Sample request:
 import os
 import pickle
 import logging
+import tempfile
 import numpy as np
 import pandas as pd
-
-# SHAP - optional, gracefully degrades if not installed
-try:
-    import shap
-    SHAP_AVAILABLE = True
-except ImportError:
-    SHAP_AVAILABLE = False
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -57,7 +53,7 @@ log = logging.getLogger(__name__)
 # Paths
 # ---------------------------------------------------------------------------
 PROJECT_NAME = os.environ.get("DOMINO_PROJECT_NAME", "LendingClubProject")
-MODEL_PATH   = os.path.join(os.path.dirname(__file__), "..", "models", "sklearn_rf_model.pkl")
+MODEL_PATH   = os.path.join(os.path.dirname(__file__), "..", "models", "h2o_best_model.pkl")
 
 # ---------------------------------------------------------------------------
 # Risk tier thresholds
@@ -84,7 +80,6 @@ NUMERIC_FEATURES = [
     "int_rate",
     "installment",
     "annual_inc",
-    "emp_length",
     "dti",
     "revol_bal",
     "revol_util",
@@ -105,7 +100,6 @@ FEATURE_DEFAULTS = {
     "int_rate":       12.0,
     "installment":    300.0,
     "annual_inc":     60000,
-    "emp_length":     5.0,
     "dti":            15.0,
     "revol_bal":      10000,
     "revol_util":     40.0,
@@ -150,27 +144,75 @@ ALL_FEATURES = NUMERIC_FEATURES + ENGINEERED_FEATURES + OHE_COLUMNS
 
 
 # ---------------------------------------------------------------------------
+# H2O model wrapper
+# train_h2o.py pickled this class as __main__.H2OModelWrapper, so an identical
+# definition must be available to unpickle the model. It stores the H2O model as
+# raw bytes and re-imports it into a local H2O cluster on load.
+# ---------------------------------------------------------------------------
+def _ensure_h2o():
+    import h2o
+    if h2o.connection() is None or not h2o.connection().connected:
+        h2o.init(nthreads=-1, max_mem_size="2G")
+        h2o.no_progress()
+    return h2o
+
+
+class H2OModelWrapper:
+    """Thin sklearn-compatible wrapper around the H2O leader model."""
+
+    def __init__(self, h2o_model, feature_names):
+        self.h2o_model     = h2o_model
+        self.feature_names = feature_names
+
+    def predict_proba(self, X):
+        h2o = _ensure_h2o()
+        # Send only columns the model knows; H2O fills any it expects but we omit
+        # (e.g. emp_length, dropped from scoring) with NA instead of erroring.
+        X = pd.DataFrame(X)
+        frame = h2o.H2OFrame(X[[c for c in self.feature_names if c in X.columns]])
+        preds = self.h2o_model.predict(frame).as_data_frame()
+        return np.column_stack([preds["p0"].values, preds["p1"].values])
+
+    def __getstate__(self):
+        h2o = _ensure_h2o()
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            path = h2o.save_model(model=self.h2o_model, path=tmp_dir, force=True)
+            with open(path, "rb") as f:
+                model_bytes = f.read()
+        return {"model_bytes": model_bytes, "feature_names": self.feature_names}
+
+    def __setstate__(self, state):
+        h2o = _ensure_h2o()
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            path = os.path.join(tmp_dir, "h2o_model")
+            with open(path, "wb") as f:
+                f.write(state["model_bytes"])
+            self.h2o_model = h2o.load_model(path)
+        self.feature_names = state["feature_names"]
+
+
+class _WrapperUnpickler(pickle.Unpickler):
+    """Resolve __main__.H2OModelWrapper (how train_h2o.py saved it) to the class above."""
+
+    def find_class(self, module, name):
+        if name == "H2OModelWrapper":
+            return H2OModelWrapper
+        return super().find_class(module, name)
+
+
+# ---------------------------------------------------------------------------
 # Model loader - cached after first load
 # ---------------------------------------------------------------------------
 _model = None
-_explainer = None
 
 def _load_model():
-    global _model, _explainer
+    global _model
     if _model is None:
         log.info(f"Loading model from: {MODEL_PATH}")
         with open(MODEL_PATH, "rb") as f:
-            _model = pickle.load(f)
-        log.info("Model loaded successfully")
-
-        if SHAP_AVAILABLE:
-            try:
-                _explainer = shap.TreeExplainer(_model)
-                log.info("SHAP TreeExplainer initialised")
-            except Exception as e:
-                log.warning(f"SHAP explainer could not be initialised: {e}")
-
-    return _model, _explainer
+            _model = _WrapperUnpickler(f).load()
+        log.info(f"Model loaded successfully ({_model.h2o_model.algo})")
+    return _model
 
 
 # ---------------------------------------------------------------------------
@@ -275,31 +317,28 @@ def _build_feature_vector(data: dict) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------------
-# SHAP explanation
+# Feature contributions (log-odds)
+# Tree models (GBM/DRF/XGBoost): H2O SHAP via predict_contributions.
+# GLM: coefficient * value. Stacked ensembles / deep learning: not supported -> {}.
 # ---------------------------------------------------------------------------
-def _get_shap_explanation(explainer, feature_vector: pd.DataFrame,
-                           top_n: int = 5) -> dict:
-    if explainer is None or not SHAP_AVAILABLE:
-        return {}
+def _get_contributions(model: H2OModelWrapper, feature_vector: pd.DataFrame,
+                       top_n: int = 5) -> dict:
     try:
-        sv = explainer.shap_values(feature_vector)
-        # For binary classifiers shap_values returns list [class0, class1]
-        if isinstance(sv, list):
-            sv = sv[1]
-        sv = sv[0]  # single row
+        h2o_model = model.h2o_model
+        if h2o_model.algo == "glm":
+            coefs = h2o_model.coef()
+            contrib = {f: coefs.get(f, 0.0) * float(feature_vector[f].iloc[0])
+                       for f in feature_vector.columns}
+        else:
+            h2o = _ensure_h2o()
+            frame = h2o.H2OFrame(feature_vector)
+            df = h2o_model.predict_contributions(frame).as_data_frame()
+            contrib = df.drop(columns=["BiasTerm"], errors="ignore").iloc[0].to_dict()
 
-        shap_df = pd.DataFrame({
-            "feature":   feature_vector.columns,
-            "shap_value": sv,
-            "abs_shap":  np.abs(sv),
-        }).sort_values("abs_shap", ascending=False).head(top_n)
-
-        return {
-            row["feature"]: round(float(row["shap_value"]), 4)
-            for _, row in shap_df.iterrows()
-        }
+        top = sorted(contrib.items(), key=lambda kv: abs(kv[1]), reverse=True)[:top_n]
+        return {k: round(float(v), 4) for k, v in top}
     except Exception as e:
-        log.warning(f"SHAP calculation failed: {e}")
+        log.warning(f"Contribution calculation unavailable: {e}")
         return {}
 
 
@@ -310,7 +349,7 @@ def predict(**data) -> dict:
     """
     Score a single loan application for default risk.
     """
-    model, explainer = _load_model()
+    model = _load_model()
 
     feature_vector = _build_feature_vector(data)
 
@@ -327,15 +366,14 @@ def predict(**data) -> dict:
     risk_score     = int(round((1 - prob) * 100))
     recommendation = RECOMMENDATIONS[risk_tier]
 
-    # SHAP explanation
-    shap_values = _get_shap_explanation(explainer, feature_vector)
+    contributions = _get_contributions(model, feature_vector)
 
     result = {
         "default_probability": round(prob, 4),
         "risk_score":          risk_score,
         "risk_tier":           risk_tier,
         "recommendation":      recommendation,
-        "shap_values":         shap_values,
+        "contributions":       contributions,
     }
 
     log.info(f"Scored loan - prob: {prob:.4f}, tier: {risk_tier}, rec: {recommendation}")
@@ -362,7 +400,6 @@ if __name__ == "__main__":
         "total_acc":           18,
         "pub_rec":             0,
         "delinq_2yrs":         0,
-        "emp_length":          5.0,
         "fico_range_low":      680,
         "fico_range_high":     684,
         "inq_last_6mths":      1,
@@ -373,7 +410,7 @@ if __name__ == "__main__":
         "verification_status": "Verified",
     }
 
-    result = predict(sample)
+    result = predict(**sample)
     print("\n=== Prediction Result ===")
     for k, v in result.items():
         print(f"  {k}: {v}")

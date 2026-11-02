@@ -1,7 +1,17 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mkdir -p /mnt/code/scripts/policy_docs && ls /mnt/code/scripts/)"
+      "Bash(mkdir -p /mnt/code/scripts/policy_docs && ls /mnt/code/scripts/)",
+      "Bash(bash -n app.sh)",
+      "Bash(timeout 5 bash app.sh)",
+      "Bash(bash -x app.sh)",
+      "Bash(lsof -ti:8889)",
+      "Bash(xargs kill -9)",
+      "Read(//home/ubuntu/.claude/marketplaces/domino/plugins/domino-claude-plugin/skills/app-deployment/**)",
+      "Bash(python3 -c \"from app import app; print(''App loaded successfully'')\")",
+      "Bash(pkill -9 -f gunicorn)",
+      "Bash(curl -s http://localhost:8890/)",
+      "Bash(curl -X POST http://localhost:8890/ -d \"loan_amnt=15000&int_rate=13.5&term=36&purpose=debt_consolidation&grade=C&annual_inc=65000&dti=18.5&home_ownership=RENT&verification_status=Verified&installment=350&revol_bal=12000&revol_util=55&open_acc=7&total_acc=18&pub_rec=0&delinq_2yrs=0\")"
     ],
     "additionalDirectories": [
       "/mnt/code/scripts"

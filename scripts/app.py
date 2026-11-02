@@ -28,7 +28,14 @@ CORS(app, resources={r"/*": {"origins": "*", "allow_headers": "*", "methods": ["
 
 # Domino endpoint config
 MODEL_API_URL = os.environ.get("DOMINO_MODEL_API_URL", "")
-MODEL_API_KEY = os.environ.get("DOMINO_MODEL_PAT", "")
+
+# Get access token from Domino's token service (for calling model APIs from apps)
+def get_domino_token():
+    try:
+        return requests.get("http://localhost:8899/access-token").text
+    except:
+        # Fallback to env var if token service unavailable (e.g., local testing)
+        return os.environ.get("DOMINO_MODEL_PAT", "")
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -509,12 +516,13 @@ def score_application():
 
     try:
         payload = request.json
+        token = get_domino_token()
 
         response = requests.post(
             MODEL_API_URL,
             headers={
                 "Content-Type": "application/json",
-                "Authorization": f"Bearer {MODEL_API_KEY}"
+                "Authorization": f"Bearer {token}"
             },
             json={"data": payload},
             timeout=30

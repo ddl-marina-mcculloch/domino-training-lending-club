@@ -11,7 +11,11 @@
       "Bash(python3 -c \"from app import app; print(''App loaded successfully'')\")",
       "Bash(pkill -9 -f gunicorn)",
       "Bash(curl -s http://localhost:8890/)",
-      "Bash(curl -X POST http://localhost:8890/ -d \"loan_amnt=15000&int_rate=13.5&term=36&purpose=debt_consolidation&grade=C&annual_inc=65000&dti=18.5&home_ownership=RENT&verification_status=Verified&installment=350&revol_bal=12000&revol_util=55&open_acc=7&total_acc=18&pub_rec=0&delinq_2yrs=0\")"
+      "Bash(curl -X POST http://localhost:8890/ -d \"loan_amnt=15000&int_rate=13.5&term=36&purpose=debt_consolidation&grade=C&annual_inc=65000&dti=18.5&home_ownership=RENT&verification_status=Verified&installment=350&revol_bal=12000&revol_util=55&open_acc=7&total_acc=18&pub_rec=0&delinq_2yrs=0\")",
+      "Bash(curl -s http://localhost:8899/access-token)",
+      "Bash(echo \"DOMINO_MODEL_API_URL: $DOMINO_MODEL_API_URL:-NOT SET\")",
+      "Bash(echo \"DOMINO_MODEL_PAT: $DOMINO_MODEL_PAT:0:20...\")",
+      "Bash(curl -X POST \"$DOMINO_MODEL_API_URL\" )"
     ],
     "additionalDirectories": [
       "/mnt/code/scripts"

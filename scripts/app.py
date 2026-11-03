@@ -28,7 +28,6 @@ CORS(app, resources={r"/*": {"origins": "*", "allow_headers": "*", "methods": ["
 
 # Domino endpoint config
 MODEL_API_URL = os.environ.get("DOMINO_MODEL_API_URL", "")
-MODEL_API_KEY = os.environ.get("DOMINO_MODEL_API_KEY", "")
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -507,15 +506,11 @@ def score_application():
     if not MODEL_API_URL:
         return {"error": "DOMINO_MODEL_API_URL is not configured"}
 
-    if not MODEL_API_KEY:
-        return {"error": "DOMINO_MODEL_API_KEY is not configured"}
-
     try:
         payload = request.json
 
         headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {MODEL_API_KEY}"
+            "Content-Type": "application/json"
         }
 
         response = requests.post(

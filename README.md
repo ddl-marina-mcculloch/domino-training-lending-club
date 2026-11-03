@@ -287,13 +287,13 @@ Try modifying the values and observe how the probability and recommendation chan
 
 ***Documentation: [Publish Apps](https://docs.dominodatalab.com/en/latest/user_guide/71635d/publish-apps/)***
 
-Before publishing the app, set the endpoint environment variables so the app can call your scoring API:
+Before publishing the app, set the endpoint environment variable so the app can call your scoring API:
 
 1. Navigate to your endpoint's **Overview** tab and copy the **Endpoint URL**
 2. Under Account > Account settings navigate to Personal Access Tokens and click **Generate new token**
 3. In your project, go to **Settings > Environment variables** and add:
    - `DOMINO_MODEL_API_URL` — your endpoint URL
-   - `DOMINO_MODEL_PAT` — your PAT generated in Account Settings
+   - `DOMINO_MODEL_API_KEY` — your PAT generated in Account Settings
 
 Navigate to **Deployments > Apps & Agents**. Enter the title *YourName Loan Officer Dashboard* and click **Publish**.
 
@@ -398,7 +398,7 @@ Launch a workspace and open a terminal. Set your API key:
 ```bash
 export ANTHROPIC_API_KEY=your-key-here
 export DOMINO_MODEL_API_URL=your-endpoint-url
-export DOMINO_MODEL_PAT=your-endpoint-key
+export DOMINO_MODEL_API_KEY=your-domino-pat-key
 ```
 
 Run the explainer with the default sample application:

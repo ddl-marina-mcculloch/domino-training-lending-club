@@ -29,7 +29,8 @@
       "Bash(curl -X POST \"http://localhost:8899/models/6a1dbd3fbc9e8b77e0f72349/latest/model\" -H \"Content-Type: application/json\" -d '{\"\"\"\"data\"\"\"\": {\"\"\"\"loan_amnt\"\"\"\": 15000}}' -v)",
       "Bash(curl -X POST \"http://localhost:8899/v4/models/6a1dbd3fbc9e8b77e0f72349/latest/model\" -H \"Content-Type: application/json\" -d '{\"\"\"\"data\"\"\"\": {\"\"\"\"loan_amnt\"\"\"\": 15000}}' -w \"\\nHTTP Status: %{http_code}\\n\" -s)",
       "Bash(curl -X POST \"$DOMINO_API_PROXY/models/6a1dbd3fbc9e8b77e0f72349/latest/model\" )",
-      "Bash(echo \"DOMINO_MODEL_API_KEY=$DOMINO_MODEL_API_KEY:-NOT SET\")"
+      "Bash(echo \"DOMINO_MODEL_API_KEY=$DOMINO_MODEL_API_KEY:-NOT SET\")",
+      "Bash(python3 -c \"\nimport os\nprint(''MODEL_API_URL:'', os.environ.get(''DOMINO_MODEL_API_URL'', ''NOT SET''))\nprint(''MODEL_API_KEY:'', os.environ.get(''DOMINO_MODEL_API_KEY'', ''NOT SET'')[:50] if os.environ.get(''DOMINO_MODEL_API_KEY'') else ''NOT SET'')\n\")"
     ],
     "additionalDirectories": [
       "/mnt/code/scripts"

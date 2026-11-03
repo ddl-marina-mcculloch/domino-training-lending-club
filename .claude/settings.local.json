@@ -15,7 +15,19 @@
       "Bash(curl -s http://localhost:8899/access-token)",
       "Bash(echo \"DOMINO_MODEL_API_URL: $DOMINO_MODEL_API_URL:-NOT SET\")",
       "Bash(echo \"DOMINO_MODEL_PAT: $DOMINO_MODEL_PAT:0:20...\")",
-      "Bash(curl -X POST \"$DOMINO_MODEL_API_URL\" )"
+      "Bash(curl -X POST \"$DOMINO_MODEL_API_URL\" )",
+      "Bash(curl -X POST 'https://cloud-dogfood.domino.tech:443/models/6a1dbd3fbc9e8b77e0f72349/latest/model' -H \"Content-Type: application/json\" -H \"Authorization: Bearer $DOMINO_MODEL_PAT\" -d '{\"\"\"\"data\"\"\"\": {\"\"\"\"loan_amnt\"\"\"\": 15000}}' -v)",
+      "Bash(curl -X POST 'https://cloud-dogfood.domino.tech:443/models/6a1dbd3fbc9e8b77e0f72349/latest/model' -H \"Content-Type: application/json\" -H \"X-Domino-Api-Key: $DOMINO_MODEL_PAT\" -d '{\"\"\"\"data\"\"\"\": {\"\"\"\"loan_amnt\"\"\"\": 15000}}' -w \"\\nHTTP Status: %{http_code}\\n\")",
+      "Bash(curl -X POST 'https://cloud-dogfood.domino.tech:443/models/6a1dbd3fbc9e8b77e0f72349/latest/model' -H \"Content-Type: application/json\" -H \"X-Domino-Api-Key: $DOMINO_MODEL_PAT\" -d '{\"\"\"\"data\"\"\"\": {\"\"\"\"loan_amnt\"\"\"\": 15000, \"\"\"\"int_rate\"\"\"\": 13.5, \"\"\"\"term\"\"\"\": \"\"\"\"36\"\"\"\", \"\"\"\"purpose\"\"\"\": \"\"\"\"debt_consolidation\"\"\"\", \"\"\"\"grade\"\"\"\": \"\"\"\"C\"\"\"\", \"\"\"\"annual_inc\"\"\"\": 65000, \"\"\"\"dti\"\"\"\": 18.5, \"\"\"\"home_ownership\"\"\"\": \"\"\"\"RENT\"\"\"\", \"\"\"\"verification_status\"\"\"\": \"\"\"\"Verified\"\"\"\", \"\"\"\"installment\"\"\"\": 350, \"\"\"\"revol_bal\"\"\"\": 12000, \"\"\"\"revol_util\"\"\"\": 55, \"\"\"\"open_acc\"\"\"\": 7, \"\"\"\"total_acc\"\"\"\": 18, \"\"\"\"pub_rec\"\"\"\": 0, \"\"\"\"delinq_2yrs\"\"\"\": 0}}' -s)",
+      "Bash(echo \"$DOMINO_MODEL_PAT\")",
+      "Bash(echo \"$DOMINO_MODEL_PAT:0:50\")",
+      "Bash(printenv)",
+      "Bash(curl -X POST \"$DOMINO_MODEL_API_URL\" -H \"Content-Type: application/json\" -H \"X-Domino-Api-Key: $DOMINO_USER_API_KEY\" -d '{\"\"\"\"data\"\"\"\": {\"\"\"\"loan_amnt\"\"\"\": 15000, \"\"\"\"int_rate\"\"\"\": 13.5, \"\"\"\"term\"\"\"\": \"\"\"\"36\"\"\"\", \"\"\"\"purpose\"\"\"\": \"\"\"\"debt_consolidation\"\"\"\", \"\"\"\"grade\"\"\"\": \"\"\"\"C\"\"\"\", \"\"\"\"annual_inc\"\"\"\": 65000, \"\"\"\"dti\"\"\"\": 18.5, \"\"\"\"home_ownership\"\"\"\": \"\"\"\"RENT\"\"\"\", \"\"\"\"verification_status\"\"\"\": \"\"\"\"Verified\"\"\"\", \"\"\"\"installment\"\"\"\": 350, \"\"\"\"revol_bal\"\"\"\": 12000, \"\"\"\"revol_util\"\"\"\": 55, \"\"\"\"open_acc\"\"\"\": 7, \"\"\"\"total_acc\"\"\"\": 18, \"\"\"\"pub_rec\"\"\"\": 0, \"\"\"\"delinq_2yrs\"\"\"\": 0}}' -s)",
+      "Bash(python3 -m json.tool)",
+      "Bash(curl -X POST \"$DOMINO_MODEL_API_URL\" -H \"Content-Type: application/json\" -H \"Authorization: Bearer $DOMINO_MODEL_PAT\" -d '{\"\"\"\"data\"\"\"\": {\"\"\"\"loan_amnt\"\"\"\": 15000}}' -w \"\\nHTTP_STATUS:%{http_code}\\n\" -v)",
+      "Bash(echo \"Full URL: $DOMINO_MODEL_API_URL\" echo \"API Proxy: $DOMINO_API_PROXY\" echo \"\" echo \"Testing different proxy paths:\" curl -X POST \"http://localhost:8899/models/6a1dbd3fbc9e8b77e0f72349/latest/model\" -H \"Content-Type: application/json\" -d '{\"\"\"\"data\"\"\"\": {\"\"\"\"loan_amnt\"\"\"\": 15000}}' -w \"\\nStatus: %{http_code}\\n\" -s)",
+      "Bash(curl -X POST \"http://localhost:8899/models/6a1dbd3fbc9e8b77e0f72349/latest/model\" -H \"Content-Type: application/json\" -d '{\"\"\"\"data\"\"\"\": {\"\"\"\"loan_amnt\"\"\"\": 15000}}' -v)",
+      "Bash(curl -X POST \"http://localhost:8899/v4/models/6a1dbd3fbc9e8b77e0f72349/latest/model\" -H \"Content-Type: application/json\" -d '{\"\"\"\"data\"\"\"\": {\"\"\"\"loan_amnt\"\"\"\": 15000}}' -w \"\\nHTTP Status: %{http_code}\\n\" -s)"
     ],
     "additionalDirectories": [
       "/mnt/code/scripts"

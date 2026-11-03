@@ -10,8 +10,8 @@ Provides a form-based UI for loan officers to:
   - See the top factors driving the decision (feature contributions / SHAP)
 
 Environment variables required:
-    DOMINO_MODEL_API_URL : Full URL of the deployed Domino endpoint
-    DOMINO_MODEL_PAT     : API key for the endpoint
+    DOMINO_MODEL_API_URL  : Full URL of the deployed Domino model endpoint
+    DOMINO_MODEL_PAT      : Personal Access Token (PAT) for authentication
 
 Usage:
     gunicorn app:app --bind 0.0.0.0:8890
@@ -28,7 +28,7 @@ CORS(app, resources={r"/*": {"origins": "*", "allow_headers": "*", "methods": ["
 
 # Domino endpoint config
 MODEL_API_URL = os.environ.get("DOMINO_MODEL_API_URL", "")
-MODEL_API_KEY = os.environ.get("DOMINO_MODEL_PAT", "")
+MODEL_PAT = os.environ.get("DOMINO_MODEL_PAT", "")
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -507,6 +507,9 @@ def score_application():
     if not MODEL_API_URL:
         return {"error": "DOMINO_MODEL_API_URL is not configured"}
 
+    if not MODEL_PAT:
+        return {"error": "DOMINO_MODEL_PAT is not configured"}
+
     try:
         payload = request.json
 
@@ -514,15 +517,22 @@ def score_application():
             MODEL_API_URL,
             headers={
                 "Content-Type": "application/json",
-                "Authorization": f"Bearer {MODEL_API_KEY}"
+                "Authorization": f"Bearer {MODEL_PAT}"
             },
             json={"data": payload},
             timeout=30
         )
+
+        # Debug: log the response
+        print(f"Response status: {response.status_code}")
+        print(f"Response body: {response.text[:500]}")
+
         response.raise_for_status()
         body = response.json()
         return body.get("result", body)
 
+    except requests.exceptions.HTTPError as e:
+        return {"error": f"Model API error: {response.status_code} - {response.text[:200]}"}
     except requests.exceptions.ConnectionError:
         return {"error": "Could not connect to the model endpoint"}
     except requests.exceptions.Timeout:

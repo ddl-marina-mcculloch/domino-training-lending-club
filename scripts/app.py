@@ -11,7 +11,10 @@ Provides a form-based UI for loan officers to:
 
 Environment variables required:
     DOMINO_MODEL_API_URL  : Full URL of the deployed Domino model endpoint
-    DOMINO_MODEL_PAT      : Personal Access Token (PAT) for authentication
+    DOMINO_MODEL_PAT      : Personal Access Token (PAT) - only required when running outside Domino
+
+Note: When running inside Domino (workspace/app), authentication is handled automatically
+      via DOMINO_API_PROXY. PAT is only needed for external deployments.
 
 Usage:
     gunicorn app:app --bind 0.0.0.0:8890
@@ -29,6 +32,7 @@ CORS(app, resources={r"/*": {"origins": "*", "allow_headers": "*", "methods": ["
 # Domino endpoint config
 MODEL_API_URL = os.environ.get("DOMINO_MODEL_API_URL", "")
 MODEL_PAT = os.environ.get("DOMINO_MODEL_PAT", "")
+API_PROXY = os.environ.get("DOMINO_API_PROXY", "")
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -507,19 +511,27 @@ def score_application():
     if not MODEL_API_URL:
         return {"error": "DOMINO_MODEL_API_URL is not configured"}
 
-    if not MODEL_PAT:
-        return {"error": "DOMINO_MODEL_PAT is not configured"}
-
     try:
         payload = request.json
 
-        response = requests.post(
-            MODEL_API_URL,
-            headers={
+        # When running inside Domino, use API proxy which adds auth automatically
+        if API_PROXY:
+            url = MODEL_API_URL.replace("https://cloud-dogfood.domino.tech:443", API_PROXY)
+            headers = {"Content-Type": "application/json"}
+        else:
+            # Running outside Domino - use PAT
+            if not MODEL_PAT:
+                return {"error": "DOMINO_MODEL_PAT is required when running outside Domino"}
+            url = MODEL_API_URL
+            headers = {
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {MODEL_PAT}"
-            },
-            json={"data": payload},
+            }
+
+        response = requests.post(
+            url,
+            headers=headers,
+            data=json.dumps({"data": payload}),
             timeout=30
         )
 

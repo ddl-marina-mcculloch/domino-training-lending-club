@@ -290,10 +290,9 @@ Try modifying the values and observe how the probability and recommendation chan
 Before publishing the app, set the endpoint environment variable so the app can call your scoring API:
 
 1. Navigate to your endpoint's **Overview** tab and copy the **Endpoint URL**
-2. Under Account > Account settings navigate to Personal Access Tokens and click **Generate new token**
+2. Confirm your Endpoint can be accessed by going to the Access tab
 3. In your project, go to **Settings > Environment variables** and add:
    - `DOMINO_MODEL_API_URL` — your endpoint URL
-   - `DOMINO_MODEL_API_KEY` — your PAT generated in Account Settings
 
 Navigate to **Deployments > Apps & Agents**. Enter the title *YourName Loan Officer Dashboard* and click **Publish**.
 

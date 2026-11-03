@@ -31,8 +31,7 @@ CORS(app, resources={r"/*": {"origins": "*", "allow_headers": "*", "methods": ["
 
 # Domino endpoint config
 MODEL_API_URL = os.environ.get("DOMINO_MODEL_API_URL", "")
-MODEL_PAT = os.environ.get("DOMINO_MODEL_PAT", "")
-API_PROXY = os.environ.get("DOMINO_API_PROXY", "")
+MODEL_API_KEY = os.environ.get("DOMINO_MODEL_API_KEY") or os.environ.get("DOMINO_MODEL_PAT", "")
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -511,28 +510,22 @@ def score_application():
     if not MODEL_API_URL:
         return {"error": "DOMINO_MODEL_API_URL is not configured"}
 
+    if not MODEL_API_KEY:
+        return {"error": "DOMINO_MODEL_API_KEY or DOMINO_MODEL_PAT is not configured"}
+
     try:
         payload = request.json
 
-        # When running inside Domino, use API proxy which adds auth automatically
-        if API_PROXY:
-            url = MODEL_API_URL.replace("https://cloud-dogfood.domino.tech:443", API_PROXY)
-            headers = {"Content-Type": "application/json"}
-        else:
-            # Running outside Domino - use PAT
-            if not MODEL_PAT:
-                return {"error": "DOMINO_MODEL_PAT is required when running outside Domino"}
-            url = MODEL_API_URL
-            headers = {
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {MODEL_PAT}"
-            }
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {MODEL_API_KEY}"
+        }
 
         response = requests.post(
-            url,
+            MODEL_API_URL,
             headers=headers,
             data=json.dumps({"data": payload}),
-            timeout=30
+            timeout=15
         )
 
         # Debug: log the response

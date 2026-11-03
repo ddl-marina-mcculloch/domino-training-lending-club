@@ -10,11 +10,8 @@ Provides a form-based UI for loan officers to:
   - See the top factors driving the decision (feature contributions / SHAP)
 
 Environment variables required:
-    DOMINO_MODEL_API_URL  : Full URL of the deployed Domino model endpoint
-    DOMINO_MODEL_PAT      : Personal Access Token (PAT) - only required when running outside Domino
-
-Note: When running inside Domino (workspace/app), authentication is handled automatically
-      via DOMINO_API_PROXY. PAT is only needed for external deployments.
+    DOMINO_MODEL_API_URL : Full URL of the deployed Domino endpoint
+    DOMINO_MODEL_API_KEY : API key for the endpoint
 
 Usage:
     gunicorn app:app --bind 0.0.0.0:8890
@@ -31,7 +28,7 @@ CORS(app, resources={r"/*": {"origins": "*", "allow_headers": "*", "methods": ["
 
 # Domino endpoint config
 MODEL_API_URL = os.environ.get("DOMINO_MODEL_API_URL", "")
-MODEL_API_KEY = os.environ.get("DOMINO_MODEL_API_KEY") or os.environ.get("DOMINO_MODEL_PAT", "")
+MODEL_API_KEY = os.environ.get("DOMINO_MODEL_API_KEY", "")
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -511,7 +508,7 @@ def score_application():
         return {"error": "DOMINO_MODEL_API_URL is not configured"}
 
     if not MODEL_API_KEY:
-        return {"error": "DOMINO_MODEL_API_KEY or DOMINO_MODEL_PAT is not configured"}
+        return {"error": "DOMINO_MODEL_API_KEY is not configured"}
 
     try:
         payload = request.json
